@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./partials/head.ejs') %>
+
+<body>
+    
+    <%- include('./partials/nav.ejs') %>
+
+    <div class="content books">
+        <h2>All Books List</h2>
+        <% if(books.length > 0) { %>
+            <% books.forEach(book => { %>
+                <div class="book">
+                    <h3 class="book_name"><%= book.title %></h3>
+                    <p class="book_year"><%= book.year %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>There no books to display!</p>
+        <% } %>
+    </div>
+
+    <%- include('./partials/footer.ejs') %>
+</body>
+
+</html>

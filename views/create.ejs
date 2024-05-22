@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./partials/head.ejs') %>
+
+<body>
+    
+    <%- include('./partials/nav.ejs') %>
+
+    <div class="content create">
+        <h2>Create New Book</h2>
+        <form action="/books/create">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" required>
+
+            <label for="year">Year</label>
+            <input type="number" name="year" id="year" required>
+
+            <input type="submit" value="submit">
+        </form>
+    </div>
+
+    <%- include('./partials/footer.ejs') %>
+</body>
+
+</html>

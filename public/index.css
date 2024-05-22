@@ -1,0 +1,95 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+nav {
+    margin: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid silver;
+    padding: 5px 0;
+}
+
+a {
+    color: silver;
+    text-decoration: none;
+}
+
+aside a {
+    color: black;
+    font-size: 30px;
+}
+
+ul {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 20px;
+}
+
+ul a:hover {
+    color: black;
+}
+
+.content {
+    margin: 20px;
+}
+
+.content>h2 {
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+.books {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.book {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border-bottom: 1px solid silver;
+    padding-bottom: 5px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 5px;
+}
+
+form input:last-child {
+    width: 80px;
+    height: 32px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+label {
+    font-size: 18px;
+}
+
+input {
+    font-size: 18px;
+    padding: 5px;
+}
+
+.about p {
+    font-size: 20px;
+}
+
+footer {
+    margin: 0 20px;
+    color: silver;
+    font-size: 20px;
+}
