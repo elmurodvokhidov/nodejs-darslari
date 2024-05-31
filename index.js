@@ -4,6 +4,8 @@ const authentication = require('./middleware/authentication');
 const helmet = require('helmet');
 const cors = require('cors');
 const books = require('./routes/booksRoute');
+const mongoose = require('mongoose');
+require("dotenv").config();
 
 // Middleware
 app.use(express.json()); // ushbu middleware funksiya, backend'ga kelgan so'rovlarni json ko'rinishidan o'qib olish uchun ishlatilgan
@@ -33,8 +35,10 @@ app.get('/', (_, res) => {
     res.render('index', { title: "Book Store | Home", text: "Book Store 📚" });
 });
 
-// Portni listen qilish
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-    console.log(`${port} - portni eshitishni boshladim...`);
-});
+const port = process.env.PORT || 5100
+mongoose.connect(process.env.CONN_STR)
+    .then(() => {
+        console.log("MongoDb ga ulanish hosil qilindi...");
+        app.listen(port, () => console.log(`${port} ni eshitishni boshladim...`));
+    })
+    .catch((err) => console.log("MongoDb ga ulanishda XATOLIK: " + err));
