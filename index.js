@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
-const authentication = require('./middleware/authentication');
 const helmet = require('helmet');
 const cors = require('cors');
-const books = require('./routes/booksRoute');
 const mongoose = require('mongoose');
+const authentication = require('./middleware/authentication');
+const books = require('./routes/booksRoute');
+const categories = require('./routes/categoryRoute');
 require("dotenv").config();
 
 // Middleware
@@ -28,6 +29,7 @@ app.set('view engine', 'pug'); // bu bilan express dasturimizda view engine sifa
 
 // Books obyektini router sifatida ishlatish
 app.use('/api/books', books);
+app.use('/api/category', categories);
 
 // Routes
 // Asosiy route
