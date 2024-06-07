@@ -6,7 +6,8 @@ const getAllBooksFunc = async (req, res) => {
         const { nomi } = req.query;
         const nomiRegEx = new RegExp(nomi, "i");
         const books = await Books
-            .find({ nomi: nomiRegEx });
+            .find({ nomi: nomiRegEx })
+            .populate("avtor");
 
         // Barcha kitoblar ro'yhatini clientga qaytarish
         res.status(200).json(books);
@@ -91,7 +92,10 @@ const validateFunction = (book) => {
     const schema = Joi.object({
         nomi: Joi.string().required().min(3).max(30),
         narxi: Joi.number(),
-        avtor: Joi.array(),
+        cat: Joi.string(),
+        img: Joi.string(),
+        description: Joi.string(),
+        avtor: Joi.string(),
     });
 
     // Validatsiya natijasini funksiyaga qaytarish

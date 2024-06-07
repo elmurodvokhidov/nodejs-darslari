@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const authentication = require('./middleware/authentication');
 const books = require('./routes/booksRoute');
 const categories = require('./routes/categoryRoute');
+const auths = require('./routes/authRoute');
 require("dotenv").config();
 
 // Middleware
@@ -30,6 +31,7 @@ app.set('view engine', 'pug'); // bu bilan express dasturimizda view engine sifa
 // Books obyektini router sifatida ishlatish
 app.use('/api/books', books);
 app.use('/api/category', categories);
+app.use('/api/auth', auths);
 
 // Routes
 // Asosiy route
@@ -37,7 +39,7 @@ app.get('/', (_, res) => {
     res.render('index', { title: "Book Store | Home", text: "Book Store 📚" });
 });
 
-const port = process.env.PORT || 5100
+const port = process.env.PORT || 5100;
 mongoose.connect(process.env.CONN_STR)
     .then(() => {
         console.log("MongoDb ga ulanish hosil qilindi...");
