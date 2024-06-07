@@ -7,10 +7,12 @@ import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import Navbar from "./pages/Navbar";
 import Footer from "./pages/Footer";
+import Update from "./pages/Update";
+import Create from "./pages/Create";
 
 export default function App() {
   return (
-    <div>
+    <div className="bg-gray-100">
       {/* Navbar */}
       <Navbar />
 
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/create-new" element={<Create />} />
+        <Route path="/update/:id" element={<Update />} />
       </Routes>
 
       {/* Footer */}

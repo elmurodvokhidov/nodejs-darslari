@@ -25,7 +25,7 @@ const BookSlice = createSlice({
         },
         bookFailure: (state, action) => {
             state.isLoading = false;
-            state.isError = action;
+            state.isError = action.payload;
         },
     },
 });
