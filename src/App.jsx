@@ -9,8 +9,30 @@ import Navbar from "./pages/Navbar";
 import Footer from "./pages/Footer";
 import Update from "./pages/Update";
 import Create from "./pages/Create";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { authSuccess } from "./redux/slice/authSlice";
+import Service from "./config/service";
+import { getFromLocalStorage } from "./config/localstorage";
 
 export default function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    try {
+      const getAuthFunction = async () => {
+        const { data } = await Service.getAuth();
+        dispatch(authSuccess(data));
+      };
+
+      if (getFromLocalStorage("token")) {
+        getAuthFunction();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   return (
     <div className="bg-gray-100">
       {/* Navbar */}

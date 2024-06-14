@@ -1,17 +1,20 @@
 import { useEffect } from "react"
 import { categoryFailure, categoryStart, categorySuccess } from "../redux/slice/categorySlice";
-import api from "../config/api";
 import { useDispatch, useSelector } from "react-redux";
+import Service from "../config/service";
+import { useNavigate } from "react-router-dom";
 
 const Create = () => {
     const { categories } = useSelector(state => state.category);
+    const { isLoggedIn } = useSelector(state => state.auth);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getAllCategories = async () => {
             try {
                 dispatch(categoryStart());
-                const { data } = await api.get("/api/category");
+                const { data } = await Service.getAllCategory();
                 dispatch(categorySuccess(data));
             } catch (error) {
                 console.log(error.message);
@@ -21,6 +24,12 @@ const Create = () => {
 
         getAllCategories();
     }, []);
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate('/');
+        }
+    }, [isLoggedIn, navigate]);
 
     return (
         <form className="max-w-sm mx-auto my-20">

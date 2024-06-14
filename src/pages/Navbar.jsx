@@ -2,12 +2,13 @@ import { useState } from "react";
 import { FaSwatchbook } from "react-icons/fa";
 import { IoMdCart, IoMdPerson } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
+import { useSelector } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
 
 export default function Navbar() {
-    const [isAuth, setIsAuth] = useState(true);
-    const location = useLocation()
-    const pathname = location.pathname;
+    const { isLoggedIn } = useSelector(state => state.auth);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const location = useLocation();
 
     return (
         <nav className="bg-white shadow-lg" id="top">
@@ -16,13 +17,15 @@ export default function Navbar() {
                     <li><NavLink to={"/"}>Home</NavLink></li>
                     <li><NavLink to={"/wishlist"}>Wishlist <span>(0)</span></NavLink></li>
                     {
-                        isAuth ?
+                        isLoggedIn && isAdmin ?
                             <li><NavLink to={"/create-new"}>Create new book</NavLink></li>
                             :
-                            <li>
-                                <NavLink to={"/signup"} className="mr-6">Create an account</NavLink>
-                                <NavLink to={"/signin"}>Login</NavLink>
-                            </li>
+                            !isAdmin && isLoggedIn ?
+                                null :
+                                <li>
+                                    <NavLink to={"/signup"} className="mr-6">Create an account</NavLink>
+                                    <NavLink to={"/signin"}>Login</NavLink>
+                                </li>
                     }
                 </ul>
 
@@ -34,13 +37,15 @@ export default function Navbar() {
                         <span>item(s)</span>
                         <span>$0.00</span>
                     </li>
-                    <NavLink to={"/profile"} className="text-2xl ml-4"><IoMdPerson /></NavLink>
+                    {isLoggedIn && <NavLink to={"/profile"} className="text-2xl ml-4"><IoMdPerson /></NavLink>}
                 </ul>
 
             </div>
 
             {
-                location.pathname !== "/create-new" ?
+                location.pathname !== "/create-new" &&
+                    location.pathname !== "/signup" &&
+                    location.pathname !== "/signin" ?
                     <div className="flex justify-between items-center px-32 py-8">
                         <NavLink to={"/"} className="flex items-center gap-1 text-3xl text-gray-800">
                             <FaSwatchbook className="mr-1" />

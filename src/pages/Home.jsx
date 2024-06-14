@@ -5,6 +5,7 @@ import api from "../config/api";
 import { categoryFailure, categoryStart, categorySuccess } from "../redux/slice/categorySlice";
 import { FiPlus } from "react-icons/fi";
 import { IoMdCart } from "react-icons/io";
+import Service from "../config/service";
 
 export default function Home() {
     const { books, isLoading } = useSelector(state => state.book);
@@ -28,7 +29,7 @@ export default function Home() {
         const getBooksFunction = async () => {
             try {
                 dispatch(bookStart());
-                const { data } = await api.get("/api/books");
+                const { data } = await Service.getAllBooks();
                 dispatch(bookSuccess({ type: "b", data }));
             } catch (error) {
                 console.log(error);
@@ -45,7 +46,7 @@ export default function Home() {
             try {
                 dispatch(categoryStart());
                 const { _id, __v, createdAt, updatedAt, ...others } = newCat;
-                await api.put(`/api/category/${newCat._id}`, others);
+                await Service.updateCategory(newCat._id, others);
                 getAllCategories();
                 setUpdateCatModal(null);
             } catch (error) {
@@ -88,7 +89,7 @@ export default function Home() {
                 {
                     isLoading ? <h1>Loading...</h1> : <>
                         {
-                            books.length > 0 ?
+                            books?.length > 0 ?
                                 books.map(book => (
                                     <div
                                         key={book._id}
