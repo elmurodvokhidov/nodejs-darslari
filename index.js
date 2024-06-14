@@ -4,16 +4,13 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const authentication = require('./middleware/authentication');
-const books = require('./routes/booksRoute');
-const categories = require('./routes/categoryRoute');
-const auths = require('./routes/authRoute');
 require("dotenv").config();
 
 // Middleware
 app.use(express.json()); // ushbu middleware funksiya, backend'ga kelgan so'rovlarni json ko'rinishidan o'qib olish uchun ishlatilgan
 
 // Custom middleware
-app.use(authentication); // ushbu funksiya, custom middleware tuzishni o'rganish maqsadida yozilgan
+// app.use(authentication); // ushbu funksiya, custom middleware tuzishni o'rganish maqsadida yozilgan
 
 // Built in middleware
 app.use(express.static('public')); // funksiyaga berilgan papka manzili o'sha papkani static ravishda o'qish imkonini beradi
@@ -29,9 +26,9 @@ if (app.get('env') === 'development') { // process.env.NODE_ENV
 app.set('view engine', 'pug'); // bu bilan express dasturimizda view engine sifatida pug paketi ishlatilishini belgilab qo'yilgan
 
 // Books obyektini router sifatida ishlatish
-app.use('/api/books', books);
-app.use('/api/category', categories);
-app.use('/api/auth', auths);
+app.use('/api/books', require('./routes/booksRoute'));
+app.use('/api/category', require('./routes/categoryRoute'));
+app.use('/api/auth', require('./routes/authRoute'));
 
 // Routes
 // Asosiy route

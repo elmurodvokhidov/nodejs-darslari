@@ -15,7 +15,6 @@ const authSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        dob: Date,
         role: {
             type: String,
             default: "user",

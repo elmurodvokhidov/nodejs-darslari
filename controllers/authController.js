@@ -1,10 +1,14 @@
 const passwordComplexity = require("joi-password-complexity");
 const Auth = require('../model/authModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const signUpFunction = async (req, res) => {
     try {
-        const { fullname, email, password, dob, role } = req.body;
+        const { fullname, email, password, role } = req.body;
+
+        const existingAuth = await Auth.findOne({ email });
+        if (existingAuth) return res.status(400).send("Ushbu elektron pochta avval foydalanilgan");
 
         const { error } = await validatePasswordFunction(password);
         if (error) return res.status(400).send(error.details[0].message);
@@ -14,11 +18,13 @@ const signUpFunction = async (req, res) => {
             fullname,
             email,
             password: hashedPassword,
-            dob,
             role
         });
 
-        res.status(201).json(newAuth);
+        const token = jwt.sign({ id: newAuth._id }, process.env.JWT_KEY, { expiresIn: "30d" });
+
+        // res.status(201).header("x-token", token).json(newAuth);
+        res.status(201).json({ data: newAuth, token });
     } catch (error) {
         console.log(error.message);
         res.status(500).json(error);
@@ -42,6 +48,18 @@ const signInFunction = async (req, res) => {
     }
 };
 
+const getAuth = async (req, res) => {
+    try {
+        const foundAuth = await Auth.findById(req.authId);
+        if (!foundAuth) return res.status(404).json("Foydalanuvchi topilmadi");
+
+        res.status(200).json({ data: foundAuth });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json(error);
+    }
+};
+
 // Validate Password funksiyasi
 const validatePasswordFunction = (password) => {
     const schema = {
@@ -59,4 +77,5 @@ const validatePasswordFunction = (password) => {
 module.exports = {
     signUpFunction,
     signInFunction,
+    getAuth,
 };

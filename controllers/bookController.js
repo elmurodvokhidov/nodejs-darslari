@@ -1,5 +1,6 @@
 const Books = require("../model/bookModel");
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 
 const getAllBooksFunc = async (req, res) => {
     try {
