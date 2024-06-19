@@ -6,8 +6,7 @@ import { useSelector } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
 
 export default function Navbar() {
-    const { isLoggedIn } = useSelector(state => state.auth);
-    const [isAdmin, setIsAdmin] = useState(false);
+    const { isLoggedIn, auth } = useSelector(state => state.auth);
     const location = useLocation();
 
     return (
@@ -17,10 +16,10 @@ export default function Navbar() {
                     <li><NavLink to={"/"}>Home</NavLink></li>
                     <li><NavLink to={"/wishlist"}>Wishlist <span>(0)</span></NavLink></li>
                     {
-                        isLoggedIn && isAdmin ?
+                        isLoggedIn && auth?.role ?
                             <li><NavLink to={"/create-new"}>Create new book</NavLink></li>
                             :
-                            !isAdmin && isLoggedIn ?
+                            !auth?.role && isLoggedIn ?
                                 null :
                                 <li>
                                     <NavLink to={"/signup"} className="mr-6">Create an account</NavLink>

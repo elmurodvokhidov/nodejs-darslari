@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { authSuccess } from "./redux/slice/authSlice";
 import Service from "./config/service";
 import { getFromLocalStorage } from "./config/localstorage";
+import BookInfo from "./pages/BookInfo";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/create-new" element={<Create />} />
         <Route path="/update/:id" element={<Update />} />
+        <Route path="/books/:id" element={<BookInfo />} />
       </Routes>
 
       {/* Footer */}

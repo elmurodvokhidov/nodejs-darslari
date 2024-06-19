@@ -6,9 +6,12 @@ import { categoryFailure, categoryStart, categorySuccess } from "../redux/slice/
 import { FiPlus } from "react-icons/fi";
 import { IoMdCart } from "react-icons/io";
 import Service from "../config/service";
+import { IoEyeOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 export default function Home() {
     const { books, isLoading } = useSelector(state => state.book);
+    const { auth } = useSelector(state => state.auth);
     const { categories } = useSelector(state => state.category);
     const dispatch = useDispatch();
     const [updateCatModal, setUpdateCatModal] = useState(null);
@@ -85,7 +88,7 @@ export default function Home() {
                 <button className="text-white text-2xl px-8 py-4 bg-orange-500 shadow-md hover:bg-orange-300 transform"><FiPlus /></button>
             </div>
 
-            <div className="mt-10">
+            <div className="mt-10 flex gap-8">
                 {
                     isLoading ? <h1>Loading...</h1> : <>
                         {
@@ -103,7 +106,17 @@ export default function Home() {
 
                                         <div className="flex items-stretch">
                                             <h1 className="w-3/4 text-center py-2 text-white bg-gray-500">${book?.narxi}</h1>
-                                            <button className="w-1/4 flex items-center justify-center text-white bg-red-400"><IoMdCart /></button>
+                                            {
+                                                auth?.role ? <>
+                                                    <Link to={`/books/${book?._id}`} className="w-1/4 flex items-center justify-center text-white bg-blue-400">
+                                                        <IoEyeOutline />
+                                                    </Link>
+                                                </> : <>
+                                                    <button className="w-1/4 flex items-center justify-center text-white bg-red-400">
+                                                        <IoMdCart />
+                                                    </button>
+                                                </>
+                                            }
                                         </div>
                                     </div>
                                 ))

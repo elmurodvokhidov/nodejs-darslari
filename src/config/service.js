@@ -9,11 +9,14 @@ api.interceptors.request.use((req) => {
     return req;
 });
 
-
 const Service = {
     // auth
     async resgisterAuth(auth) {
         const response = await api.post('/api/auth/signup', auth);
+        return response;
+    },
+    async loginAuth(auth) {
+        const response = await api.post('/api/auth/signin', auth);
         return response;
     },
     async getAuth() {
@@ -25,6 +28,14 @@ const Service = {
     // books
     async getAllBooks() {
         const response = await api.get("/api/books");
+        return response;
+    },
+    async createNewBook(newBook) {
+        const response = await api.post("/api/books", newBook);
+        return response;
+    },
+    async getOneBook(id) {
+        const response = await api.get(`/api/books/${id}`);
         return response;
     },
 

@@ -1,6 +1,44 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { authFailure, authStart, authSuccess } from "../redux/slice/authSlice";
+import Service from "../config/service";
+import { Toast } from "../config/sweetAlert";
 
 export default function SignIn() {
+    const { isLoading, isLoggedIn } = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [auth, setAuth] = useState({
+        email: "",
+        password: "",
+    });
+
+    const getAuthCred = (e) => {
+        setAuth({
+            ...auth,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleLogin = async () => {
+        try {
+            dispatch(authStart());
+            const { data } = await Service.loginAuth(auth);
+            dispatch(authSuccess(data));
+            navigate('/');
+        } catch (error) {
+            dispatch(authFailure());
+            Toast.fire({ icon: "error", title: error?.response?.data || error.message });
+        }
+    };
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/');
+        }
+    }, [isLoggedIn, navigate]);
+
     return (
         <div>
             <h1 className="text-center text-3xl mt-10">Hisobga kirish</h1>
@@ -14,6 +52,7 @@ export default function SignIn() {
                         Elektron pochta
                     </label>
                     <input
+                        onChange={getAuthCred}
                         type="email"
                         id="email"
                         name="email"
@@ -29,6 +68,7 @@ export default function SignIn() {
                         Parolingiz
                     </label>
                     <input
+                        onChange={getAuthCred}
                         type="password"
                         id="password"
                         name="password"
@@ -37,10 +77,11 @@ export default function SignIn() {
                 </div>
 
                 <button
+                    onClick={handleLogin}
                     type="button"
                     className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
-                    Ro'yxatdan o'tish
+                    {isLoading ? "Loading..." : "Hisobga kirish"}
                 </button>
             </form>
 

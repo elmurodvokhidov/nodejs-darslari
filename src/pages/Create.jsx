@@ -1,14 +1,32 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { categoryFailure, categoryStart, categorySuccess } from "../redux/slice/categorySlice";
 import { useDispatch, useSelector } from "react-redux";
 import Service from "../config/service";
 import { useNavigate } from "react-router-dom";
+import { bookFailure, bookStart } from "../redux/slice/bookSlice";
+import { Toast } from "../config/sweetAlert";
 
 const Create = () => {
     const { categories } = useSelector(state => state.category);
-    const { isLoggedIn } = useSelector(state => state.auth);
+    const { isLoggedIn, auth } = useSelector(state => state.auth);
+    const { isLoading } = useSelector(state => state.book);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [newBook, setNewBook] = useState({
+        nomi: "",
+        narxi: "",
+        cat: "",
+        img: "https://static.vecteezy.com/system/resources/previews/007/165/324/original/book-icon-book-icon-simple-sign-book-icon-isolated-on-with-background-illustration-of-cover-book-icon-free-free-vector.jpg",
+        description: "",
+        avtor: "",
+    });
+
+    const getNewBookCred = (e) => {
+        setNewBook({
+            ...newBook,
+            [e.target.name]: e.target.value
+        });
+    };
 
     useEffect(() => {
         const getAllCategories = async () => {
@@ -31,6 +49,31 @@ const Create = () => {
         }
     }, [isLoggedIn, navigate]);
 
+    const clearInput = () => {
+        setNewBook({
+            nomi: "",
+            narxi: "",
+            cat: "",
+            img: "https://static.vecteezy.com/system/resources/previews/007/165/324/original/book-icon-book-icon-simple-sign-book-icon-isolated-on-with-background-illustration-of-cover-book-icon-free-free-vector.jpg",
+            description: "",
+            avtor: "",
+        })
+    };
+
+    const handleCreate = async () => {
+        try {
+            dispatch(bookStart());
+            const { data } = await Service.createNewBook({ ...newBook, avtor: auth?._id });
+            Toast.fire({ icon: "success", title: data?.message });
+            clearInput();
+            navigate('/');
+        } catch (error) {
+            dispatch(bookFailure(error.message));
+            console.log(error.message);
+            Toast.fire({ icon: "warning", title: error?.response?.data || error.message });
+        }
+    };
+
     return (
         <form className="max-w-sm mx-auto my-20">
             <div className="mb-5">
@@ -41,6 +84,9 @@ const Create = () => {
                     Kitob Nomi
                 </label>
                 <input
+                    disabled={isLoading}
+                    onChange={getNewBookCred}
+                    value={newBook.nomi}
                     type="text"
                     id="nomi"
                     name="nomi"
@@ -56,6 +102,9 @@ const Create = () => {
                         Kitob Narxi
                     </label>
                     <input
+                        disabled={isLoading}
+                        onChange={getNewBookCred}
+                        value={newBook.narxi}
                         type="number"
                         id="narxi"
                         required
@@ -69,7 +118,14 @@ const Create = () => {
                     >
                         Kitob Janri
                     </label>
-                    <select name="cat" id="cat" required className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    <select
+                        disabled={isLoading}
+                        onChange={getNewBookCred}
+                        value={newBook.cat}
+                        name="cat"
+                        id="cat"
+                        required
+                        className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         <option value="" className="italic">None</option>
                         {
                             categories?.map(category => (
@@ -87,6 +143,9 @@ const Create = () => {
                     Kitob Haqida
                 </label>
                 <textarea
+                    disabled={isLoading}
+                    onChange={getNewBookCred}
+                    value={newBook.description}
                     name="description"
                     id="description"
                     rows={5}
@@ -94,10 +153,12 @@ const Create = () => {
             </div>
 
             <button
+                disabled={isLoading}
+                onClick={handleCreate}
                 type="button"
                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
             >
-                Create Book
+                {isLoading ? "Loading..." : "Create Book"}
             </button>
         </form>
     )
