@@ -21,7 +21,7 @@ const signUpFunction = async (req, res) => {
             role
         });
 
-        const token = jwt.sign({ id: newAuth._id }, process.env.JWT_KEY, { expiresIn: "30d" });
+        const token = jwt.sign({ id: newAuth._id, role }, process.env.JWT_KEY, { expiresIn: "30d" });
 
         // res.status(201).header("x-token", token).json(newAuth);
         res.status(201).json({ data: newAuth, token });
@@ -41,7 +41,8 @@ const signInFunction = async (req, res) => {
         const isPassword = await bcrypt.compare(password, foundAuth.password);
         if (!isPassword) return res.status(400).send("Parol xato, iltimos qayta urinib ko'ring!");
 
-        res.status(200).json(foundAuth);
+        const token = jwt.sign({ id: foundAuth._id, role: foundAuth.role }, process.env.JWT_KEY, { expiresIn: "30d" });
+        res.status(201).json({ data: foundAuth, token });
     } catch (error) {
         console.log(error.message);
         res.status(500).json(error);
@@ -69,6 +70,7 @@ const validatePasswordFunction = (password) => {
         upperCase: 1,
         numeric: 1,
         symbol: 1,
+        requirementCount: 2,
     };
 
     return passwordComplexity(schema).validate(password);

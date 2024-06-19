@@ -22,7 +22,8 @@ const getOneBookFunc = async (req, res) => {
     try {
         const id = req.params.id;
         // Ma'lumotlar omboridan kitobni izlab topish
-        const book = await Books.findById(id);
+        const book = await Books.findById(id)
+            .populate("avtor");
         // Izlash natijasida kitob topilmasa
         if (!book) return res.status(404).send("Afsuski kitob topilmadi!");
         // Topilgan kitobni clientga qaytarib berish
@@ -35,6 +36,9 @@ const getOneBookFunc = async (req, res) => {
 
 const createNewBookFunc = async (req, res) => {
     try {
+        const role = req.authRole;
+        if (!role) return res.status(403).send("Sizga buni qilish taqiqlangan!");
+
         // Serverga kelgan so'rovni tekshirish
         const { error } = validateFunction(req.body);
         if (error) return res.status(400).send(error.details[0].message);
@@ -46,7 +50,7 @@ const createNewBookFunc = async (req, res) => {
         await newBook.save();
 
         // Clientga yangi kitobni qaytarish
-        res.status(201).send(newBook);
+        res.status(201).json({ data: newBook, message: "Yangi kitob qo'shildi" });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);

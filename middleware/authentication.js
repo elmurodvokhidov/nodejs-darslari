@@ -7,6 +7,7 @@ function authentication(req, res, next) {
 
         const decoded = jwt.verify(token, process.env.JWT_KEY);
         req.authId = decoded?.id;
+        req.authRole = decoded?.role;
 
         next();
     } catch (error) {
