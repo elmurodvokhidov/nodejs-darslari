@@ -26,8 +26,8 @@ const Service = {
 
 
     // books
-    async getAllBooks() {
-        const response = await api.get("/api/books");
+    async getAllBooks(nomi, cat) {
+        const response = await api.get(`/api/books?nomi=${nomi}&cat=${cat}`);
         return response;
     },
     async createNewBook(newBook) {
@@ -36,6 +36,14 @@ const Service = {
     },
     async getOneBook(id) {
         const response = await api.get(`/api/books/${id}`);
+        return response;
+    },
+    async updateBook(id, book) {
+        const response = await api.put(`/api/books/${id}`, book);
+        return response;
+    },
+    async deleteBook(id) {
+        const response = await api.delete(`/api/books/${id}`);
         return response;
     },
 

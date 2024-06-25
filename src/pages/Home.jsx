@@ -9,13 +9,14 @@ import Service from "../config/service";
 import { IoEyeOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
-export default function Home() {
+export default function Home({ nomi }) {
     const { books, isLoading } = useSelector(state => state.book);
     const { auth } = useSelector(state => state.auth);
     const { categories } = useSelector(state => state.category);
     const dispatch = useDispatch();
     const [updateCatModal, setUpdateCatModal] = useState(null);
     const [newCat, setNewCat] = useState({ nomi: "" });
+    const [cat, setCat] = useState("");
 
     const getAllCategories = async () => {
         try {
@@ -32,7 +33,7 @@ export default function Home() {
         const getBooksFunction = async () => {
             try {
                 dispatch(bookStart());
-                const { data } = await Service.getAllBooks();
+                const { data } = await Service.getAllBooks(nomi, cat);
                 dispatch(bookSuccess({ type: "b", data }));
             } catch (error) {
                 console.log(error);
@@ -42,7 +43,7 @@ export default function Home() {
 
         getAllCategories();
         getBooksFunction();
-    }, []);
+    }, [nomi, cat]);
 
     const updateCategoryFunction = async (e) => {
         if (e.keyCode === 13) {
@@ -62,7 +63,12 @@ export default function Home() {
     return (
         <div onClick={() => setUpdateCatModal(null)} className="px-32 pt-10 pb-20">
             <div className="flex flex-wrap items-center gap-2">
-                <button className="text-gray-500 px-8 py-4 bg-white shadow-md hover:bg-gray-800 hover:text-white transform">Barchasi</button>
+                <button
+                    onClick={() => setCat("")}
+                    className={`${cat === '' ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 bg-white shadow-md hover:bg-gray-800 hover:text-white transform`}
+                >
+                    Barchasi
+                </button>
                 {
                     categories?.map(category => (
                         updateCatModal === category?._id ?
@@ -76,19 +82,20 @@ export default function Home() {
                                 name="nomi"
                                 className="w-[170px] text-gray-500 px-8 py-4 bg-white shadow-md outline-none" /> :
                             <button
+                                onClick={(e) => setCat(category?.nomi)}
                                 onDoubleClick={() => {
                                     setUpdateCatModal(category?._id);
                                     setNewCat(category);
                                 }}
                                 key={category._id}
-                                className="text-gray-500 px-8 py-4 bg-white shadow-md hover:bg-gray-800 hover:text-white transform"
+                                className={`${cat === category?.nomi ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 bg-white shadow-md hover:bg-gray-800 hover:text-white transform`}
                             >{category?.nomi}</button>
                     ))
                 }
                 <button className="text-white text-2xl px-8 py-4 bg-orange-500 shadow-md hover:bg-orange-300 transform"><FiPlus /></button>
             </div>
 
-            <div className="mt-10 flex gap-8">
+            <div className="mt-10 flex flex-wrap gap-8">
                 {
                     isLoading ? <h1>Loading...</h1> : <>
                         {
@@ -96,27 +103,25 @@ export default function Home() {
                                 books.map(book => (
                                     <div
                                         key={book._id}
-                                        className="w-fit bg-white shadow-md"
+                                        className="w-fit flex flex-col justify-between bg-white shadow-md"
                                     >
                                         <div className="w-[160px] flex flex-col items-center gap-2 p-4">
                                             <img className="w-full h-[180px] object-cover" src={book?.img} alt={book?.nomi} />
-                                            <h1 className="uppercase text-gray-800 text-base">{book.nomi}</h1>
-                                            <p className="text-center text-gray-400 text-sm">{book?.description}</p>
+                                            <h1 className="uppercase text-gray-800 text-base">{book.nomi.length > 12 ? book.nomi.slice(0, 12) + "..." : book.nomi}</h1>
+                                            <p className="text-center text-gray-400 text-sm">{book.description.length > 30 ? book.description.slice(0, 30) + "..." : book.description}</p>
                                         </div>
 
                                         <div className="flex items-stretch">
                                             <h1 className="w-3/4 text-center py-2 text-white bg-gray-500">${book?.narxi}</h1>
                                             {
-                                                auth?.role ? <>
-                                                    <Link to={`/books/${book?._id}`} className="w-1/4 flex items-center justify-center text-white bg-blue-400">
-                                                        <IoEyeOutline />
-                                                    </Link>
-                                                </> : <>
-                                                    <button className="w-1/4 flex items-center justify-center text-white bg-red-400">
-                                                        <IoMdCart />
-                                                    </button>
-                                                </>
+                                                !auth?.role &&
+                                                <button className="w-1/4 flex items-center justify-center text-white bg-red-400">
+                                                    <IoMdCart />
+                                                </button>
                                             }
+                                            <Link to={`/books/${book?._id}`} className="w-1/4 flex items-center justify-center text-white bg-blue-400">
+                                                <IoEyeOutline />
+                                            </Link>
                                         </div>
                                     </div>
                                 ))

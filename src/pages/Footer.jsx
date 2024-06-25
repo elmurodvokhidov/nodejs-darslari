@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 export default function Footer() {
     return (
         <footer className="flex items-center justify-between text-gray-500 pt-10 px-32 pb-32 border-t-2 relative bg-gray-100">
-            <Link to={"#top"} className="absolute size-16 flex items-center justify-center -top-8 right-14 text-2xl text-gray-700 bg-gray-100"><BiUpArrowCircle /></Link>
             <p className="uppercase text-sm">Powered by opencart bookstore &copy; 2024</p>
             <h1 className="italic text-xl font-bold">
                 <span className="text-gray-700">Pay</span>

@@ -1,20 +1,22 @@
-import { useState } from "react";
 import { FaSwatchbook } from "react-icons/fa";
 import { IoMdCart, IoMdPerson } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
 
-export default function Navbar() {
+export default function Navbar({ nomi, setNomi }) {
     const { isLoggedIn, auth } = useSelector(state => state.auth);
     const location = useLocation();
 
     return (
-        <nav className="bg-white shadow-lg" id="top">
+        <nav className="bg-white shadow-lg">
             <div className="uppercase flex items-center justify-between border-b px-32 py-4 text-sm text-gray-500">
                 <ul className="flex items-center gap-6">
                     <li><NavLink to={"/"}>Home</NavLink></li>
-                    <li><NavLink to={"/wishlist"}>Wishlist <span>(0)</span></NavLink></li>
+                    {
+                        !auth?.role &&
+                        <li><NavLink to={"/wishlist"}>Wishlist <span>(0)</span></NavLink></li>
+                    }
                     {
                         isLoggedIn && auth?.role ?
                             <li><NavLink to={"/create-new"}>Create new book</NavLink></li>
@@ -53,8 +55,14 @@ export default function Navbar() {
                         </NavLink>
 
                         <div className="min-w-72 flex items-center gap-1">
-                            <input type="text" name="search" id="search" className="w-full border-2 p-2 outline-gray-800" />
-                            <label htmlFor="search" className="cursor-pointer bg-gray-300 px-4 py-3"><IoSearchOutline className="text-gray-800 text-xl" /></label>
+                            <input
+                                onChange={(e) => setNomi(e.target.value)}
+                                type="text"
+                                name="nomi"
+                                id="nomi"
+                                className="w-full border-2 p-2 outline-gray-800"
+                            />
+                            <label htmlFor="nomi" className="cursor-pointer bg-gray-300 px-4 py-3"><IoSearchOutline className="text-gray-800 text-xl" /></label>
                         </div>
                     </div> : null
             }
