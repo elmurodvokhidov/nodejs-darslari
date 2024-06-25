@@ -4,10 +4,11 @@ const jwt = require('jsonwebtoken');
 
 const getAllBooksFunc = async (req, res) => {
     try {
-        const { nomi } = req.query;
+        const { nomi, cat } = req.query;
         const nomiRegEx = new RegExp(nomi, "i");
+        const catRegEx = new RegExp(cat, "i");
         const books = await Books
-            .find({ nomi: nomiRegEx })
+            .find({ nomi: nomiRegEx, cat: catRegEx })
             .populate("avtor");
 
         // Barcha kitoblar ro'yhatini clientga qaytarish
