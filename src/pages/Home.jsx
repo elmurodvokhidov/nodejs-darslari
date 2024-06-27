@@ -21,7 +21,7 @@ export default function Home({ nomi }) {
     const getAllCategories = async () => {
         try {
             dispatch(categoryStart());
-            const { data } = await api.get("/api/category");
+            const { data } = await Service.getAllCategory();
             dispatch(categorySuccess(data));
         } catch (error) {
             console.log(error.message);
@@ -65,7 +65,7 @@ export default function Home({ nomi }) {
             <div className="flex flex-wrap items-center gap-2">
                 <button
                     onClick={() => setCat("")}
-                    className={`${cat === '' ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 bg-white shadow-md hover:bg-gray-800 hover:text-white transform`}
+                    className={`${cat === '' ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 shadow-md hover:bg-gray-800 hover:text-white transform`}
                 >
                     Barchasi
                 </button>
@@ -88,7 +88,7 @@ export default function Home({ nomi }) {
                                     setNewCat(category);
                                 }}
                                 key={category._id}
-                                className={`${cat === category?.nomi ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 bg-white shadow-md hover:bg-gray-800 hover:text-white transform`}
+                                className={`${cat === category?.nomi ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 shadow-md hover:bg-gray-800 hover:text-white transform`}
                             >{category?.nomi}</button>
                     ))
                 }

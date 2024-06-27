@@ -4,7 +4,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
 
-export default function Navbar({ nomi, setNomi }) {
+export default function Navbar({ setNomi }) {
     const { isLoggedIn, auth } = useSelector(state => state.auth);
     const location = useLocation();
 

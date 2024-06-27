@@ -5,6 +5,7 @@ import Service from "../config/service";
 import { useNavigate } from "react-router-dom";
 import { bookFailure, bookStart } from "../redux/slice/bookSlice";
 import { Toast } from "../config/sweetAlert";
+import api from "../config/api";
 
 const Create = () => {
     const { categories } = useSelector(state => state.category);
@@ -16,7 +17,7 @@ const Create = () => {
         nomi: "",
         narxi: "",
         cat: "",
-        img: "https://static.vecteezy.com/system/resources/previews/007/165/324/original/book-icon-book-icon-simple-sign-book-icon-isolated-on-with-background-illustration-of-cover-book-icon-free-free-vector.jpg",
+        img: "",
         description: "",
         avtor: "",
     });
@@ -54,7 +55,7 @@ const Create = () => {
             nomi: "",
             narxi: "",
             cat: "",
-            img: "https://static.vecteezy.com/system/resources/previews/007/165/324/original/book-icon-book-icon-simple-sign-book-icon-isolated-on-with-background-illustration-of-cover-book-icon-free-free-vector.jpg",
+            img: "",
             description: "",
             avtor: "",
         })
@@ -72,6 +73,13 @@ const Create = () => {
             console.log(error.message);
             Toast.fire({ icon: "warning", title: error?.response?.data || error.message });
         }
+    };
+
+    const uploadImage = async (e) => {
+        const formData = new FormData();
+        formData.append("image", e.target.files[0]);
+        const { data } = await api.post("/upload-image", formData);
+        setNewBook({ ...newBook, img: data?.imgUrl });
     };
 
     return (
@@ -150,6 +158,20 @@ const Create = () => {
                     id="description"
                     rows={5}
                     className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 resize-none"></textarea>
+            </div>
+            <div className="mb-5">
+                <label
+                    htmlFor="image"
+                    className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                    Kitob rasmini belgilash
+                </label>
+                <input
+                    onChange={uploadImage}
+                    type="file"
+                    name="image"
+                    id="image"
+                />
             </div>
 
             <button

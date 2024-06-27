@@ -12,49 +12,49 @@ api.interceptors.request.use((req) => {
 const Service = {
     // auth
     async resgisterAuth(auth) {
-        const response = await api.post('/api/auth/signup', auth);
+        const response = await api.post('/auth/signup', auth);
         return response;
     },
     async loginAuth(auth) {
-        const response = await api.post('/api/auth/signin', auth);
+        const response = await api.post('/auth/signin', auth);
         return response;
     },
     async getAuth() {
-        const response = await api.get('/api/auth');
+        const response = await api.get('/auth');
         return response;
     },
 
 
     // books
     async getAllBooks(nomi, cat) {
-        const response = await api.get(`/api/books?nomi=${nomi}&cat=${cat}`);
+        const response = await api.get(`/books?nomi=${nomi}&cat=${cat}`);
         return response;
     },
     async createNewBook(newBook) {
-        const response = await api.post("/api/books", newBook);
+        const response = await api.post("/books", newBook);
         return response;
     },
     async getOneBook(id) {
-        const response = await api.get(`/api/books/${id}`);
+        const response = await api.get(`/books/${id}`);
         return response;
     },
     async updateBook(id, book) {
-        const response = await api.put(`/api/books/${id}`, book);
+        const response = await api.put(`/books/${id}`, book);
         return response;
     },
     async deleteBook(id) {
-        const response = await api.delete(`/api/books/${id}`);
+        const response = await api.delete(`/books/${id}`);
         return response;
     },
 
 
     // category
     async updateCategory(id, category) {
-        const response = await api.put(`/api/category/${id}`, category);
+        const response = await api.put(`/category/${id}`, category);
         return response;
     },
     async getAllCategory() {
-        const response = await api.get("/api/category");
+        const response = await api.get("/category");
         return response;
     },
 };
