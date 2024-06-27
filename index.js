@@ -3,7 +3,6 @@ const app = express();
 const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const authentication = require('./middleware/authentication');
 require("dotenv").config();
 
 // Middleware
@@ -15,6 +14,7 @@ app.use(express.json()); // ushbu middleware funksiya, backend'ga kelgan so'rovl
 // Built in middleware
 app.use(express.static('public')); // funksiyaga berilgan papka manzili o'sha papkani static ravishda o'qish imkonini beradi
 // masalan, papka ichida fayllarga so'rov jo'natish orqali ularni o'qib olish mumkin, http://localhost:5000/readme.txt
+app.use(express.static('uploads'));
 
 // Third party middleware
 app.use(helmet()); // helmet - express dasturimizni xavfsizligini oshrishga yordam beradigan middleware funksiya
@@ -29,6 +29,7 @@ app.set('view engine', 'pug'); // bu bilan express dasturimizda view engine sifa
 app.use('/api/books', require('./routes/booksRoute'));
 app.use('/api/category', require('./routes/categoryRoute'));
 app.use('/api/auth', require('./routes/authRoute'));
+app.use('/api/upload-image', require('./routes/imageRoute'));
 
 // Routes
 // Asosiy route
