@@ -19,6 +19,14 @@ const authSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        favorities: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "kitob"
+        },
+        basket: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: "kitob"
+        }
     },
     { timestamps: true }
 );

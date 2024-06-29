@@ -51,7 +51,11 @@ const signInFunction = async (req, res) => {
 
 const getAuth = async (req, res) => {
     try {
-        const foundAuth = await Auth.findById(req.authId);
+        const foundAuth = await Auth.findById(req.authId)
+            .populate({
+                path: "basket",
+                populate: [{ path: "avtor", model: "auth" }]
+            });
         if (!foundAuth) return res.status(404).json("Foydalanuvchi topilmadi");
 
         res.status(200).json({ data: foundAuth });
