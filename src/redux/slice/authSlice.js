@@ -30,6 +30,7 @@ const AuthSlice = createSlice({
         authLogout: (state, action) => {
             state.isLoading = false;
             state.isLoggedIn = false;
+            state.auth = null;
             clearLocalStorage();
         },
     },

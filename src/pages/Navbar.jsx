@@ -2,7 +2,7 @@ import { FaSwatchbook } from "react-icons/fa";
 import { IoMdCart, IoMdPerson } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 export default function Navbar({ setNomi }) {
     const { isLoggedIn, auth } = useSelector(state => state.auth);
@@ -32,11 +32,13 @@ export default function Navbar({ setNomi }) {
 
                 <ul className="flex items-center cursor-pointer">
                     <li><IoMdCart className="text-black text-lg" /></li>
-                    <li className="flex gap-1">
-                        <span className="text-black">Cart:</span>
-                        <span>0</span>
-                        <span>item(s)</span>
-                        <span>$0.00</span>
+                    <li>
+                        <Link to={'/cart'} className="flex gap-1">
+                            <span className="text-black">Cart:</span>
+                            <span>{auth?.basket.length}</span>
+                            <span>item(s)</span>
+                            <span>${auth?.basket.reduce((total, product) => total + product?.narxi, 0)}</span>
+                        </Link>
                     </li>
                     {isLoggedIn && <NavLink to={"/profile"} className="text-2xl ml-4"><IoMdPerson /></NavLink>}
                 </ul>

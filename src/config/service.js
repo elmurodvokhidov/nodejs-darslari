@@ -46,6 +46,10 @@ const Service = {
         const response = await api.delete(`/books/${id}`);
         return response;
     },
+    async addToBasket(userId, bookId) {
+        const response = await api.post(`/books/${userId}/${bookId}`);
+        return response;
+    },
 
 
     // category

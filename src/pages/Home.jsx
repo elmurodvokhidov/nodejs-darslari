@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { bookFailure, bookStart, bookSuccess } from "../redux/slice/bookSlice";
-import api from "../config/api";
 import { categoryFailure, categoryStart, categorySuccess } from "../redux/slice/categorySlice";
 import { FiPlus } from "react-icons/fi";
 import { IoMdCart } from "react-icons/io";
 import Service from "../config/service";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Toast } from "../config/sweetAlert";
+import { FaCheck } from "react-icons/fa";
+import { getFromLocalStorage } from "../config/localstorage";
+import { authSuccess } from "../redux/slice/authSlice";
 
 export default function Home({ nomi }) {
     const { books, isLoading } = useSelector(state => state.book);
-    const { auth } = useSelector(state => state.auth);
+    const { auth, isLoggedIn } = useSelector(state => state.auth);
     const { categories } = useSelector(state => state.category);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [updateCatModal, setUpdateCatModal] = useState(null);
     const [newCat, setNewCat] = useState({ nomi: "" });
     const [cat, setCat] = useState("");
@@ -27,6 +31,11 @@ export default function Home({ nomi }) {
             console.log(error.message);
             dispatch(categoryFailure(error.message));
         }
+    };
+
+    const getAuthFunction = async () => {
+        const { data } = await Service.getAuth();
+        dispatch(authSuccess(data));
     };
 
     useEffect(() => {
@@ -57,6 +66,24 @@ export default function Home({ nomi }) {
                 console.log(error.message);
                 dispatch(categoryFailure(error.message));
             }
+        }
+    };
+
+    const addToBasketFunction = async (bookId) => {
+        if (isLoggedIn) {
+            try {
+                const { data } = await Service.addToBasket(auth?._id, bookId);
+                Toast.fire({ icon: "success", title: data?.message });
+                if (getFromLocalStorage("token")) {
+                    getAuthFunction();
+                }
+            } catch (error) {
+                console.log(error.message);
+                Toast.fire({ icon: "warning", title: error?.response?.data || error.message });
+            }
+        }
+        else {
+            navigate("/signup");
         }
     };
 
@@ -115,9 +142,20 @@ export default function Home({ nomi }) {
                                             <h1 className="w-3/4 text-center py-2 text-white bg-gray-500">${book?.narxi}</h1>
                                             {
                                                 !auth?.role &&
-                                                <button className="w-1/4 flex items-center justify-center text-white bg-red-400">
-                                                    <IoMdCart />
-                                                </button>
+                                                <>
+                                                    {
+                                                        auth?.basket.find(product => product._id === book?._id) ?
+                                                            <button
+                                                                className="w-1/4 flex items-center justify-center text-white bg-green-400">
+                                                                <FaCheck />
+                                                            </button> :
+                                                            <button
+                                                                onClick={() => addToBasketFunction(book?._id)}
+                                                                className="w-1/4 flex items-center justify-center text-white bg-red-400">
+                                                                <IoMdCart />
+                                                            </button>
+                                                    }
+                                                </>
                                             }
                                             <Link to={`/books/${book?._id}`} className="w-1/4 flex items-center justify-center text-white bg-blue-400">
                                                 <IoEyeOutline />
