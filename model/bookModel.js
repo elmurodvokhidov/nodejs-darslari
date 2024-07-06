@@ -8,10 +8,12 @@ const kitobSxemasi = mongoose.Schema(
         cat: String,
         img: String,
         description: String,
-        avtor: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "auth"
-        },
+        avtor: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
+        comments: [{
+            text: String,
+            rating: Number,
+            avtor: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
+        }]
     },
     { timestamps: true }
 );

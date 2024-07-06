@@ -23,10 +23,18 @@ const authSchema = new mongoose.Schema(
             type: [mongoose.Schema.Types.ObjectId],
             ref: "kitob"
         },
-        basket: {
-            type: [mongoose.Schema.Types.ObjectId],
-            ref: "kitob"
-        }
+        basket: [
+            {
+                book: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "kitob",
+                },
+                count: {
+                    type: Number,
+                    default: 0
+                }
+            }
+        ]
     },
     { timestamps: true }
 );

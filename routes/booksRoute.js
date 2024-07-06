@@ -7,6 +7,7 @@ const {
     updateBookFunc,
     deleteBookFunc,
     addToBasketFunc,
+    addCommentFunc,
 } = require('../controllers/bookController');
 const authentication = require('../middleware/authentication');
 
@@ -23,6 +24,8 @@ router.put('/:id', updateBookFunc);
 router.delete('/:id', deleteBookFunc);
 // Berilgan kitobni foydalanuvchi savatiga joylash
 router.post('/:userId/:bookId', addToBasketFunc);
+// Kitobga sharh yozish
+router.put('/comment/:id', addCommentFunc);
 
 
 // Routerni export qilish

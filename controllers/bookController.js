@@ -95,11 +95,26 @@ const deleteBookFunc = async (req, res) => {
 
 const addToBasketFunc = async (req, res) => {
     try {
-        const { userId, bookId } = req.params;
+        const { userId, bookId, count } = req.params;
         const user = await Auth.findById(userId);
-        user.basket.push(bookId);
+        user.basket.push({ book: bookId, count });
         await user.save();
         res.status(200).json({ message: "Muvaffaqiyatli saqlandi" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+};
+
+const addCommentFunc = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { text, rating, avtor } = req.body;
+
+        const foundBook = await Books.findById(id);
+        foundBook.comments.push({ text, rating, avtor });
+        await foundBook.save();
+        res.status(200).json({ data: foundBook, message: "Muvaffaqiyatli saqlandi" });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
@@ -129,4 +144,5 @@ module.exports = {
     updateBookFunc,
     deleteBookFunc,
     addToBasketFunc,
+    addCommentFunc,
 };
