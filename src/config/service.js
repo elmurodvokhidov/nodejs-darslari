@@ -50,6 +50,18 @@ const Service = {
         const response = await api.post(`/books/${userId}/${bookId}`);
         return response;
     },
+    async deleteFromBasket(userId, bookId) {
+        const response = await api.delete(`/auth/${userId}/basket/${bookId}`);
+        return response;
+    },
+    async addComment(bookId, comment) {
+        const response = await api.put(`/books/comment/${bookId}`, comment);
+        return response;
+    },
+    async incAndDec(userId, id, type) {
+        const response = await api.put(`/auth/${userId}/basket/${id}`, { type });
+        return response;
+    },
 
 
     // category

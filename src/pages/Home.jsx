@@ -144,7 +144,7 @@ export default function Home({ nomi }) {
                                                 !auth?.role &&
                                                 <>
                                                     {
-                                                        auth?.basket.find(product => product._id === book?._id) ?
+                                                        auth?.basket.find(product => product.book._id === book?._id) ?
                                                             <button
                                                                 className="w-1/4 flex items-center justify-center text-white bg-green-400">
                                                                 <FaCheck />

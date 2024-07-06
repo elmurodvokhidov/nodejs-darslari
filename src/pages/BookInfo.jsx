@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { bookFailure, bookStart, bookSuccess } from "../redux/slice/bookSlice";
 import Service from "../config/service";
 import Swal from "sweetalert2";
 import { Toast } from "../config/sweetAlert";
+import { Box, Rating } from "@mui/material";
+import { authSuccess } from "../redux/slice/authSlice";
 
 const BookInfo = () => {
     const { auth } = useSelector(state => state.auth);
@@ -12,21 +14,31 @@ const BookInfo = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [value, setValue] = useState(0);
+
+    const getOneBookFunction = async (authId) => {
+        try {
+            dispatch(bookStart());
+            const { data } = await Service.getOneBook(id);
+            dispatch(bookSuccess({ data, type: "a" }));
+            const userRating = data?.comments?.filter(comment => comment?.avtor === authId);
+            setValue(userRating[userRating?.length - 1]?.rating ?? 0);
+        } catch (error) {
+            dispatch(bookFailure());
+            console.log(error);
+        }
+    };
+
+    const getAuthFunction = () => {
+        Service.getAuth().then(({ data }) => {
+            dispatch(authSuccess(data));
+            getOneBookFunction(data.data._id);
+        }).catch((error) => console.log(error))
+    };
 
     useEffect(() => {
-        const getOneBookFunction = async () => {
-            try {
-                dispatch(bookStart());
-                const { data } = await Service.getOneBook(id);
-                dispatch(bookSuccess({ data: data, type: "a" }));
-            } catch (error) {
-                dispatch(bookFailure());
-                console.log(error);
-            }
-        };
-
-        getOneBookFunction();
-    }, []);
+        getAuthFunction();
+    }, [id]);
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -52,16 +64,47 @@ const BookInfo = () => {
         });
     };
 
+    const ratingFunction = async (newValue, bookId) => {
+        const { value: text } = await Swal.fire({
+            input: "textarea",
+            inputLabel: "Message",
+            inputPlaceholder: "Type your message here...",
+            inputAttributes: {
+                "aria-label": "Type your message here"
+            },
+            showCancelButton: true
+        });
+
+        if (text) {
+            dispatch(bookStart());
+            const { data } = await Service.addComment(bookId, { text, rating: newValue, avtor: auth?._id });
+            dispatch(bookSuccess({ type: "a", data: data.data }));
+            Toast.fire({ icon: "success", title: data?.message });
+        }
+    };
+
     return (
         <div className="px-32 py-16 flex justify-center">
             {
-                isLoading ? "Loading..." :
+                isLoading || !auth ? "Loading..." :
                     <div className="border rounded-xl overflow-hidden bg-white shadow-lg">
-                        <img
-                            src={book?.img}
-                            alt={book?.nomi + " rasmi"}
-                            className="w-[500px]"
-                        />
+                        <figure className="flex flex-col items-end p-2">
+                            <img
+                                src={book?.img}
+                                alt={book?.nomi + " rasmi"}
+                                className="w-[500px]"
+                            />
+                            <Box sx={{ '& > legend': { mt: 2 } }}>
+                                <Rating
+                                    name="simple-controlled"
+                                    value={value}
+                                    onChange={(event, newValue) => {
+                                        setValue(newValue);
+                                        ratingFunction(newValue, book?._id);
+                                    }}
+                                />
+                            </Box>
+                        </figure>
                         <div className="flex flex-col gap-2 p-4 text-xl border-t">
                             <h1 className="text-3xl">{book?.nomi}</h1>
                             <h1>{book?.description}</h1>
