@@ -46,7 +46,7 @@ const Update = () => {
                 dispatch(bookStart());
                 const { data } = await Service.getOneBook(id);
                 dispatch(bookSuccess({ data: data, type: "a" }));
-                setNewBook(data);
+                setNewBook({ ...data, cat: data?.cat?._id });
             } catch (error) {
                 dispatch(bookFailure());
                 console.log(error);
@@ -77,7 +77,7 @@ const Update = () => {
     const handleUpdate = async () => {
         try {
             dispatch(bookStart());
-            const { _id, __v, avtor, createdAt, updatedAt, ...others } = newBook;
+            const { _id, __v, avtor, createdAt, updatedAt, comments, ...others } = newBook;
             const { data } = await Service.updateBook(newBook?._id, others);
             Toast.fire({ icon: "success", title: "Kitob ma'lumotlari muvaffaqiyatli yangilandi" });
             clearInput();
@@ -144,7 +144,7 @@ const Update = () => {
                         <option value="" className="italic">None</option>
                         {
                             categories?.map(category => (
-                                <option value={category?.nomi} key={category?._id}>{category?.nomi}</option>
+                                <option value={category?._id} key={category?._id}>{category?.nomi}</option>
                             ))
                         }
                     </select>

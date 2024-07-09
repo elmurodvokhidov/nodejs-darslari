@@ -137,7 +137,7 @@ const Create = () => {
                         <option value="" className="italic">None</option>
                         {
                             categories?.map(category => (
-                                <option value={category?.nomi} key={category?._id}>{category?.nomi}</option>
+                                <option value={category?._id} key={category?._id}>{category?.nomi}</option>
                             ))
                         }
                     </select>

@@ -15,7 +15,7 @@ export default function Navbar({ setNomi }) {
                     <li><NavLink to={"/"}>Home</NavLink></li>
                     {
                         !auth?.role &&
-                        <li><NavLink to={"/wishlist"}>Wishlist <span>(0)</span></NavLink></li>
+                        <li><NavLink to={"/wishlist"}>Wishlist <span>({auth?.wishlist.length})</span></NavLink></li>
                     }
                     {
                         isLoggedIn && auth?.role ?
@@ -37,12 +37,11 @@ export default function Navbar({ setNomi }) {
                             <span className="text-black">Cart:</span>
                             <span>{auth?.basket.length}</span>
                             <span>item(s)</span>
-                            <span>${auth?.basket.reduce((total, product) => total + product?.book?.narxi, 0)}</span>
+                            <span>${auth?.basket.reduce((total, product) => total + product?.book?.narxi * product?.count, 0)}</span>
                         </Link>
                     </li>
                     {isLoggedIn && <NavLink to={"/profile"} className="text-2xl ml-4"><IoMdPerson /></NavLink>}
                 </ul>
-
             </div>
 
             {

@@ -13,7 +13,6 @@ export default function Cart() {
 
     const deleteFromCart = async (bookId) => {
         try {
-            dispatch(authStart());
             const { data } = await Service.deleteFromBasket(auth?._id, bookId);
             dispatch(authSuccess(data));
             Toast.fire({ icon: "success", title: data?.message });

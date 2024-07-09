@@ -86,7 +86,7 @@ const BookInfo = () => {
     return (
         <div className="px-32 py-16 flex justify-center">
             {
-                isLoading || !auth ? "Loading..." :
+                isLoading || !auth || !book ? "Loading..." :
                     <div className="border rounded-xl overflow-hidden bg-white shadow-lg">
                         <figure className="flex flex-col items-end p-2">
                             <img
@@ -110,7 +110,7 @@ const BookInfo = () => {
                             <h1>{book?.description}</h1>
                             <div className="flex gap-6">
                                 <h1>Narxi: <b>{book?.narxi}$</b></h1>
-                                <h1>Turi: <b>{book?.cat}</b></h1>
+                                <h1>Turi: <b>{book?.cat?.nomi}</b></h1>
                             </div>
                         </div>
 

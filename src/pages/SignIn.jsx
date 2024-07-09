@@ -83,9 +83,16 @@ export default function SignIn() {
                 >
                     {isLoading ? "Loading..." : "Hisobga kirish"}
                 </button>
-            </form>
 
-            <p className="text-center mb-10">Hisobingiz yo'q bo'lsa, <Link to={"/signup"} className="text-blue-500 hover:underline">Ro'yhatdan o'tish</Link></p>
+                <div className="flex justify-between mt-4">
+                    <button className="text-blue-500 hover:underline">
+                        Parolingizni unutdingizmi?
+                    </button>
+                    <Link to={"/signup"} className="text-blue-500 hover:underline">
+                        Ro'yhatdan o'tish
+                    </Link>
+                </div>
+            </form>
         </div>
     )
 }

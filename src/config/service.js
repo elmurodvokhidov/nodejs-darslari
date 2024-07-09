@@ -47,7 +47,7 @@ const Service = {
         return response;
     },
     async addToBasket(userId, bookId) {
-        const response = await api.post(`/books/${userId}/${bookId}`);
+        const response = await api.post(`/books/${userId}/basket/${bookId}`);
         return response;
     },
     async deleteFromBasket(userId, bookId) {
@@ -60,6 +60,10 @@ const Service = {
     },
     async incAndDec(userId, id, type) {
         const response = await api.put(`/auth/${userId}/basket/${id}`, { type });
+        return response;
+    },
+    async toggleLike(userId, bookId) {
+        const response = await api.post(`/books/${userId}/wishlist/${bookId}`);
         return response;
     },
 

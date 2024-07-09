@@ -9,15 +9,13 @@ import { IoEyeOutline } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../config/sweetAlert";
 import { FaCheck } from "react-icons/fa";
-import { getFromLocalStorage } from "../config/localstorage";
-import { authSuccess } from "../redux/slice/authSlice";
+import { GoHeart, GoHeartFill } from "react-icons/go";
 
-export default function Home({ nomi }) {
+export default function Home({ nomi, addToBasketFunction, toggleLikeFunction }) {
     const { books, isLoading } = useSelector(state => state.book);
-    const { auth, isLoggedIn } = useSelector(state => state.auth);
+    const { auth } = useSelector(state => state.auth);
     const { categories } = useSelector(state => state.category);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [updateCatModal, setUpdateCatModal] = useState(null);
     const [newCat, setNewCat] = useState({ nomi: "" });
     const [cat, setCat] = useState("");
@@ -31,11 +29,6 @@ export default function Home({ nomi }) {
             console.log(error.message);
             dispatch(categoryFailure(error.message));
         }
-    };
-
-    const getAuthFunction = async () => {
-        const { data } = await Service.getAuth();
-        dispatch(authSuccess(data));
     };
 
     useEffect(() => {
@@ -69,24 +62,6 @@ export default function Home({ nomi }) {
         }
     };
 
-    const addToBasketFunction = async (bookId) => {
-        if (isLoggedIn) {
-            try {
-                const { data } = await Service.addToBasket(auth?._id, bookId);
-                Toast.fire({ icon: "success", title: data?.message });
-                if (getFromLocalStorage("token")) {
-                    getAuthFunction();
-                }
-            } catch (error) {
-                console.log(error.message);
-                Toast.fire({ icon: "warning", title: error?.response?.data || error.message });
-            }
-        }
-        else {
-            navigate("/signup");
-        }
-    };
-
     return (
         <div onClick={() => setUpdateCatModal(null)} className="px-32 pt-10 pb-20">
             <div className="flex flex-wrap items-center gap-2">
@@ -109,13 +84,13 @@ export default function Home({ nomi }) {
                                 name="nomi"
                                 className="w-[170px] text-gray-500 px-8 py-4 bg-white shadow-md outline-none" /> :
                             <button
-                                onClick={(e) => setCat(category?.nomi)}
+                                onClick={(e) => setCat(category?._id)}
                                 onDoubleClick={() => {
                                     setUpdateCatModal(category?._id);
                                     setNewCat(category);
                                 }}
                                 key={category._id}
-                                className={`${cat === category?.nomi ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 shadow-md hover:bg-gray-800 hover:text-white transform`}
+                                className={`${cat === category?._id ? 'bg-gray-800 text-white' : 'bg-white'} text-gray-500 px-8 py-4 shadow-md hover:bg-gray-800 hover:text-white transform`}
                             >{category?.nomi}</button>
                     ))
                 }
@@ -132,7 +107,17 @@ export default function Home({ nomi }) {
                                         key={book._id}
                                         className="w-fit flex flex-col justify-between bg-white shadow-md"
                                     >
-                                        <div className="w-[160px] flex flex-col items-center gap-2 p-4">
+                                        <div className="w-[160px] flex flex-col items-center gap-2 p-4 relative">
+                                            <button
+                                                onClick={() => toggleLikeFunction(book?._id)}
+                                                className="absolute top-2 right-2 text-xl text-red-500"
+                                            >
+                                                {
+                                                    auth?.wishlist.find(product => product._id === book?._id) ?
+                                                        <GoHeartFill /> :
+                                                        <GoHeart />
+                                                }
+                                            </button>
                                             <img className="w-full h-[180px] object-cover" src={book?.img} alt={book?.nomi} />
                                             <h1 className="uppercase text-gray-800 text-base">{book.nomi.length > 12 ? book.nomi.slice(0, 12) + "..." : book.nomi}</h1>
                                             <p className="text-center text-gray-400 text-sm">{book.description.length > 30 ? book.description.slice(0, 30) + "..." : book.description}</p>
