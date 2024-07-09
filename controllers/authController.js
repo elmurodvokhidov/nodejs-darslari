@@ -25,10 +25,11 @@ const signUpFunction = async (req, res) => {
 
         const token = jwt.sign({ id: newAuth._id, role }, process.env.JWT_KEY, { expiresIn: "30d" });
 
+        // Ro'yhatdan o'tgan foydalanuvchi uchun email xabar jo'natish funksiyasi
         sendMail(newAuth);
 
         // ? res.status(201).header("x-token", token).json(newAuth);
-        // res.status(201).json({ data: newAuth, token });
+        res.status(201).json({ data: newAuth, token });
     } catch (error) {
         console.log(error.message);
         res.status(500).json(error);
