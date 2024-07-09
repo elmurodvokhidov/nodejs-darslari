@@ -1,22 +1,34 @@
 const Books = require("../model/bookModel");
 const Joi = require('joi');
-const jwt = require('jsonwebtoken');
 const Auth = require("../model/authModel");
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 
 const getAllBooksFunc = async (req, res) => {
     try {
         const { nomi, cat } = req.query;
         const nomiRegEx = new RegExp(nomi, "i");
-        const catRegEx = new RegExp(cat, "i");
+
+        let query = { nomi: nomiRegEx };
+
+        if (cat) {
+            if (ObjectId.isValid(cat)) {
+                query.cat = new ObjectId(cat);
+            } else {
+                return res.status(400).json({ message: "Invalid category ID" });
+            }
+        }
+
         const books = await Books
-            .find({ nomi: nomiRegEx, cat: catRegEx })
-            .populate("avtor");
+            .find(query)
+            .populate("avtor")
+            .populate("cat");
 
         // Barcha kitoblar ro'yhatini clientga qaytarish
         res.status(200).json(books);
     } catch (error) {
         console.log(error.message);
-        res.status(500).send(error.message);;
+        res.status(500).send(error.message);
     }
 };
 
@@ -25,7 +37,8 @@ const getOneBookFunc = async (req, res) => {
         const id = req.params.id;
         // Ma'lumotlar omboridan kitobni izlab topish
         const book = await Books.findById(id)
-            .populate("avtor");
+            .populate("avtor")
+            .populate("cat");
         // Izlash natijasida kitob topilmasa
         if (!book) return res.status(404).send("Afsuski kitob topilmadi!");
         // Topilgan kitobni clientga qaytarib berish
@@ -121,6 +134,25 @@ const addCommentFunc = async (req, res) => {
     }
 };
 
+const toggleLikeFunc = async (req, res) => {
+    try {
+        const { userId, bookId } = req.params;
+        const user = await Auth.findById(userId);
+        const existingBook = user.wishlist.find(item => item.toString() === bookId);
+        if (existingBook) {
+            user.wishlist = user.wishlist.filter(item => item.toString() !== bookId);
+        }
+        else {
+            user.wishlist.push(bookId);
+        }
+        await user.save();
+        res.status(200).json({ message: "Muvaffaqiyatli saqlandi" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send(error.message);
+    }
+};
+
 // Validate funksiyasi
 const validateFunction = (book) => {
     // Validate schema - sxemada obyektni qanday xossalari bo’lishi kerakligi va o’sha xossalarni turlari qanaqa bo’lishi, xossani qiymati eng kamida qancha bo’lishi yoki eng uzog’i bilan qancha bo’lishi ko'rsatib o'tiladi.
@@ -145,4 +177,5 @@ module.exports = {
     deleteBookFunc,
     addToBasketFunc,
     addCommentFunc,
+    toggleLikeFunc,
 };

@@ -5,7 +5,7 @@ const kitobSxemasi = mongoose.Schema(
     {
         nomi: String,
         narxi: Number,
-        cat: String,
+        cat: { type: mongoose.Schema.Types.ObjectId, ref: "category" },
         img: String,
         description: String,
         avtor: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },

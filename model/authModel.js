@@ -19,7 +19,7 @@ const authSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        favorities: {
+        wishlist: {
             type: [mongoose.Schema.Types.ObjectId],
             ref: "kitob"
         },
@@ -31,10 +31,14 @@ const authSchema = new mongoose.Schema(
                 },
                 count: {
                     type: Number,
-                    default: 0
+                    default: 1
                 }
             }
-        ]
+        ],
+        verified: {
+            type: Boolean,
+            default: false
+        },
     },
     { timestamps: true }
 );

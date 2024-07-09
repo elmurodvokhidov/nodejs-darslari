@@ -2,6 +2,7 @@ const passwordComplexity = require("joi-password-complexity");
 const Auth = require('../model/authModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const sendMail = require("../config/sendMail");
 
 const signUpFunction = async (req, res) => {
     try {
@@ -18,13 +19,16 @@ const signUpFunction = async (req, res) => {
             fullname,
             email,
             password: hashedPassword,
-            role
+            role,
+            verified: false,
         });
 
         const token = jwt.sign({ id: newAuth._id, role }, process.env.JWT_KEY, { expiresIn: "30d" });
 
+        sendMail(newAuth);
+
         // ? res.status(201).header("x-token", token).json(newAuth);
-        res.status(201).json({ data: newAuth, token });
+        // res.status(201).json({ data: newAuth, token });
     } catch (error) {
         console.log(error.message);
         res.status(500).json(error);
@@ -35,7 +39,18 @@ const signInFunction = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const foundAuth = await Auth.findOne({ email });
+        const foundAuth = await Auth.findOne({ email })
+        await foundAuth.populate([
+            {
+                path: "basket.book",
+                model: "kitob",
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
+            },
+            { path: "wishlist" }
+        ]);
         if (!foundAuth) return res.status(404).send("Foydalanuvchi topilmadi, iltimos ro'yhatdan o'ting!");
 
         const isPassword = await bcrypt.compare(password, foundAuth.password);
@@ -52,14 +67,17 @@ const signInFunction = async (req, res) => {
 const getAuth = async (req, res) => {
     try {
         const foundAuth = await Auth.findById(req.authId)
-            .populate({
+        await foundAuth.populate([
+            {
                 path: "basket.book",
                 model: "kitob",
-                populate: {
-                    path: "avtor",
-                    model: "auth"
-                }
-            });
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
+            },
+            { path: "wishlist" }
+        ]);
         if (!foundAuth) return res.status(404).json("Foydalanuvchi topilmadi");
 
         res.status(200).json({ data: foundAuth });
@@ -88,7 +106,17 @@ const incAndDecFunction = async (req, res) => {
         }
 
         await existingAuth.save();
-        await existingAuth.populate("basket.book");
+        await existingAuth.populate([
+            {
+                path: "basket.book",
+                model: "kitob",
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
+            },
+            { path: "wishlist" }
+        ]);
         res.status(200).send({ data: existingAuth });
     } catch (error) {
         console.log(error.message);
@@ -111,7 +139,17 @@ const deleteFromBasket = async (req, res) => {
         existingAuth.basket = existingAuth.basket.filter(item => item.book.toString() !== existingBookId.book.toString());
         // TODO: Yangilangan foydalanuvchi ma'lumotlarini database ga saqlash
         await existingAuth.save();
-        await existingAuth.populate("basket.book");
+        await existingAuth.populate([
+            {
+                path: "basket.book",
+                model: "kitob",
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
+            },
+            { path: "wishlist" }
+        ]);
         // TODO: O'chirish muvaffaqiyatli bajarilsa chaqiruvchiga bildirish
         res.status(200).send({ data: existingAuth, message: "Muvaffaqiyatli o'chirildi" });
     } catch (error) {
