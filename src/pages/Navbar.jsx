@@ -15,7 +15,7 @@ export default function Navbar({ setNomi }) {
                     <li><NavLink to={"/"}>Home</NavLink></li>
                     {
                         !auth?.role &&
-                        <li><NavLink to={"/wishlist"}>Wishlist <span>({auth?.wishlist.length})</span></NavLink></li>
+                        <li><NavLink to={"/wishlist"}>Wishlist <span>({auth?.wishlist.length || 0})</span></NavLink></li>
                     }
                     {
                         isLoggedIn && auth?.role ?
@@ -56,6 +56,7 @@ export default function Navbar({ setNomi }) {
                         </NavLink>
 
                         <div className="min-w-72 flex items-center gap-1">
+                            {/* // ! Ma'lumot qidirilayotganda timeout qo'shish kerak */}
                             <input
                                 onChange={(e) => setNomi(e.target.value)}
                                 type="text"

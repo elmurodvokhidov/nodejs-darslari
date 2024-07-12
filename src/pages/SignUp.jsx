@@ -26,8 +26,10 @@ export default function SignUp() {
         try {
             dispatch(authStart());
             const { data } = await Service.resgisterAuth(auth);
-            dispatch(authSuccess(data));
-            navigate('/');
+            // dispatch(authSuccess(data));
+            Toast.fire({ icon: "success", title: data.message });
+            navigate('/signin');
+            dispatch(authFailure());
         } catch (error) {
             dispatch(authFailure());
             Toast.fire({ icon: "error", title: error?.response?.data || error.message });
