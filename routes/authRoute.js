@@ -5,7 +5,9 @@ const {
     getAuth,
     deleteFromBasket,
     incAndDecFunction,
-    verificateUser
+    verificateUser,
+    findUserByEmail,
+    updatePassword
 } = require("../controllers/authController");
 const authentication = require("../middleware/authentication");
 const router = express.Router();
@@ -17,5 +19,7 @@ router.put("/:userId/basket/:id", incAndDecFunction);
 router.delete("/:userId/basket/:bookId", deleteFromBasket);
 // todo: yangi route qo'shish lozim sababi email ga jo'natilgan link ga foydalanuvchi tashrif buyursa ma'lumot ko'rsatish uchun
 router.get("/verify/:userId/:uniqueId", verificateUser);
+router.post("/find-user-by-email", findUserByEmail);
+router.put("/update-password/:userId/:uniqueId", updatePassword);
 
 module.exports = router;

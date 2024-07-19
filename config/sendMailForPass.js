@@ -15,9 +15,8 @@ module.exports = async function ({ _id, email }) {
     const uniqueId = uuidv4() + userId;
     const hashedUniqueId = await bcrypt.hash(uniqueId, 15);
     // todo: Ular yordamida foydalanuvchiga jo'natiladigan linkni hosil qilish
-    const link = `${serverLink}/api/auth/verify/${userId}/${uniqueId}`
+    const link = `http://localhost:5173/update-password/${userId}/${uniqueId}`
 
-    // todo: Ma'lumotlar omborida yangi verification modelini hosil qilish
     const newVerificationData = new Verification({
         userId,
         uniqueId: hashedUniqueId,
@@ -25,9 +24,9 @@ module.exports = async function ({ _id, email }) {
     });
     await newVerificationData.save();
 
-    const mailTitle = 'Hisobga kirish uchun tasdiqlang'
+    const mailTitle = 'Yangi parol o\'rnatish'
     const mailText = `<p>
-            Iltimos, rasamahani tasdiqlash uchun quyidagi havoladan foydalaning: <br />
+            Iltimos, hisobga yangi parol o'rnatish uchun quyidagi sahifaga o'ting: <br />
             <a href=${link}>${link}</a> <br />
             Havolaning amal qilish muddati <b>5 soat</b>
         </p>`

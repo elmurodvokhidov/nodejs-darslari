@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const sendMail = require("../config/sendMail");
 const Verification = require("../model/verificationModel");
+const sendMailForPass = require("../config/sendMailForPass");
 
 const signUpFunction = async (req, res) => {
     try {
@@ -195,6 +196,49 @@ const verificateUser = async (req, res) => {
     }
 };
 
+const findUserByEmail = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const foundAuth = await Auth.findOne({ email });
+        if (!foundAuth) return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
+        sendMailForPass(foundAuth);
+        res.status(200).json({ message: `${email} ga xabar muvaffaqiyatli jo'natildi` });
+    } catch (error) {
+        console.log(error.message);
+        res.render('error', { message: error.message });
+    }
+};
+
+const updatePassword = async (req, res) => {
+    try {
+        const { userId, uniqueId } = req.params;
+        const { newPassword, confirmPassword } = req.body;
+        const existingVerification = await Verification.findOne({ userId });
+        if (!existingVerification) return res.status(400).json({ message: "Parolni yangilashda muammo yoki link yaroqsiz" });
+        if (existingVerification.expiresIn < Date.now()) {
+            await Verification.deleteOne({ userId });
+            res.status(400).json({ message: "Afsuski amal qilish muddati tugadi, oldinroq kirish kerak edi. Yoki boshqatdan so'rov jo'nating!" });
+        }
+        else {
+            const isValid = await bcrypt.compare(uniqueId, existingVerification.uniqueId);
+            if (!isValid) return res.status(400).json({ message: "Link yaroqsiz, iltimos qayta tekshirib ko'ring!" });
+            await Verification.deleteMany({ userId });
+            const foundAuth = await Auth.findById(userId);
+            if (!foundAuth) return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
+            const isMatch = newPassword === confirmPassword;
+            if (!isMatch) return res.status(400).json({ message: "Parollar mos emas" });
+            const hashedPassword = await bcrypt.hash(newPassword, 15);
+            foundAuth.password = hashedPassword;
+            await foundAuth.save();
+            res.status(200).json({ message: "Parol muvaffaqiyatli yangilandi" });
+
+        }
+    } catch (error) {
+        console.log(error.message);
+        res.render('error', { message: error.message });
+    }
+};
+
 // Validate Password funksiyasi
 const validatePasswordFunction = (password) => {
     const schema = {
@@ -217,4 +261,6 @@ module.exports = {
     incAndDecFunction,
     deleteFromBasket,
     verificateUser,
+    findUserByEmail,
+    updatePassword,
 };
