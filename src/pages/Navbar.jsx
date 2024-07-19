@@ -47,6 +47,7 @@ export default function Navbar({ setNomi }) {
             {
                 location.pathname !== "/create-new" &&
                     location.pathname !== "/signup" &&
+                    !location.pathname.includes("/update-password/") &&
                     location.pathname !== "/signin" ?
                     <div className="flex justify-between items-center px-32 py-8">
                         <NavLink to={"/"} className="flex items-center gap-1 text-3xl text-gray-800">

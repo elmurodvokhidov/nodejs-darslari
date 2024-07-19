@@ -23,6 +23,14 @@ const Service = {
         const response = await api.get('/auth');
         return response;
     },
+    async findUserByEmail(email) {
+        const response = await api.post('/auth/find-user-by-email', { email });
+        return response;
+    },
+    async updatePassword(userId, uniqueId, passwords) {
+        const response = await api.put(`/auth/update-password/${userId}/${uniqueId}`, passwords);
+        return response;
+    },
 
 
     // books

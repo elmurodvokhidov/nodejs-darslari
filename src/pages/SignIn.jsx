@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { authFailure, authStart, authSuccess } from "../redux/slice/authSlice";
 import Service from "../config/service";
 import { Toast } from "../config/sweetAlert";
+import Swal from "sweetalert2";
 
 export default function SignIn() {
     const { isLoading, isLoggedIn } = useSelector(state => state.auth);
@@ -38,6 +39,40 @@ export default function SignIn() {
             navigate('/');
         }
     }, [isLoggedIn, navigate]);
+
+    const handleIsForgotPassword = () => {
+        Swal.fire({
+            title: "Elektron pochtangizni kiriting",
+            input: "text",
+            inputAttributes: {
+                autocapitalize: "off"
+            },
+            showCancelButton: true,
+            confirmButtonText: "Qidirish",
+            cancelButtonText: "Bekor qilish",
+            showLoaderOnConfirm: true,
+            preConfirm: async (inputValue) => {
+                try {
+                    if (inputValue === "") return Swal.showValidationMessage("Iltimos, elektron pochtangizni kiriting");
+                    const { data } = await Service.findUserByEmail(inputValue);
+                    return data;
+                } catch (error) {
+                    Swal.showValidationMessage(error?.response?.data?.message || error.message);
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: result?.value?.message,
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        });
+    };
 
     return (
         <div>
@@ -85,7 +120,9 @@ export default function SignIn() {
                 </button>
 
                 <div className="flex justify-between mt-4">
-                    <button className="text-blue-500 hover:underline">
+                    <button
+                        onClick={handleIsForgotPassword}
+                        className="text-blue-500 hover:underline">
                         Parolingizni unutdingizmi?
                     </button>
                     <Link to={"/signup"} className="text-blue-500 hover:underline">

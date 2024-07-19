@@ -16,6 +16,7 @@ import Service from "./config/service";
 import { getFromLocalStorage } from "./config/localstorage";
 import BookInfo from "./pages/BookInfo";
 import { Toast } from "./config/sweetAlert";
+import { UpdatePassword } from "./pages/UpdatePassword";
 
 export default function App() {
   const { auth, isLoggedIn } = useSelector(state => state.auth);
@@ -93,6 +94,7 @@ export default function App() {
         <Route path="/create-new" element={<Create />} />
         <Route path="/update-book/:id" element={<Update />} />
         <Route path="/books/:id" element={<BookInfo />} />
+        <Route path="/update-password/:userId/:uniqueId" element={<UpdatePassword />} />
       </Routes>
 
       {/* Footer */}
