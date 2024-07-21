@@ -35,6 +35,12 @@ const authSchema = new mongoose.Schema(
                 }
             }
         ],
+        orders: {
+            products: [{ type: mongoose.Schema.Types.ObjectId, ref: "kitob" }],
+            total: Number,
+            address: Object,
+            status: String
+        },
         verified: {
             type: Boolean,
             default: false

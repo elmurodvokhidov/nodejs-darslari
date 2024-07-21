@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const sendMail = require("../config/sendMail");
 const Verification = require("../model/verificationModel");
 const sendMailForPass = require("../config/sendMailForPass");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const signUpFunction = async (req, res) => {
     try {
@@ -231,8 +232,32 @@ const updatePassword = async (req, res) => {
             foundAuth.password = hashedPassword;
             await foundAuth.save();
             res.status(200).json({ message: "Parol muvaffaqiyatli yangilandi" });
-
         }
+    } catch (error) {
+        console.log(error.message);
+        res.render('error', { message: error.message });
+    }
+};
+
+const payment = async (req, res) => {
+    try {
+        const { totalAmount, currency, source, products } = req.body;
+        const charges = await stripe.charges.create({
+            amount: totalAmount * 100,
+            currency,
+            source
+        });
+        const foundAuth = await Auth.findById(req.authId);
+        if (!foundAuth) return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
+        foundAuth.orders = {
+            products,
+            total: totalAmount,
+            address: charges.billing_details.address,
+            status: "pending"
+        };
+        foundAuth.basket = [];
+        await foundAuth.save();
+        res.status(200).json({ data: foundAuth, message: "Buyurtmangiz qabul qilindi" });
     } catch (error) {
         console.log(error.message);
         res.render('error', { message: error.message });
@@ -263,4 +288,5 @@ module.exports = {
     verificateUser,
     findUserByEmail,
     updatePassword,
+    payment
 };

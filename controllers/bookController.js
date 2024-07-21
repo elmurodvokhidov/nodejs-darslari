@@ -36,9 +36,11 @@ const getOneBookFunc = async (req, res) => {
     try {
         const id = req.params.id;
         // Ma'lumotlar omboridan kitobni izlab topish
-        const book = await Books.findById(id)
-            .populate("avtor")
-            .populate("cat");
+        const book = await Books.findById(id).populate([
+            { path: "comments.avtor" },
+            { path: "avtor" },
+            { path: "cat" },
+        ]);
         // Izlash natijasida kitob topilmasa
         if (!book) return res.status(404).send("Afsuski kitob topilmadi!");
         // Topilgan kitobni clientga qaytarib berish

@@ -7,7 +7,8 @@ const {
     incAndDecFunction,
     verificateUser,
     findUserByEmail,
-    updatePassword
+    updatePassword,
+    payment
 } = require("../controllers/authController");
 const authentication = require("../middleware/authentication");
 const router = express.Router();
@@ -21,5 +22,6 @@ router.delete("/:userId/basket/:bookId", deleteFromBasket);
 router.get("/verify/:userId/:uniqueId", verificateUser);
 router.post("/find-user-by-email", findUserByEmail);
 router.put("/update-password/:userId/:uniqueId", updatePassword);
+router.post("/payment", authentication, payment);
 
 module.exports = router;

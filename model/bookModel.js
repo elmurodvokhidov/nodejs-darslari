@@ -13,6 +13,7 @@ const kitobSxemasi = mongoose.Schema(
             text: String,
             rating: Number,
             avtor: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
+            createdAt: { type: Date, default: Date.now() },
         }]
     },
     { timestamps: true }
