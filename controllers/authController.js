@@ -83,6 +83,13 @@ const getAuth = async (req, res) => {
                     { path: "avtor", model: "auth" },
                     { path: "cat", model: "category" }
                 ]
+            }, {
+                path: "orders.products",
+                model: "kitob",
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
             },
             { path: "wishlist" }
         ]);
@@ -249,14 +256,32 @@ const payment = async (req, res) => {
         });
         const foundAuth = await Auth.findById(req.authId);
         if (!foundAuth) return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
-        foundAuth.orders = {
+        foundAuth.orders.push({
             products,
             total: totalAmount,
             address: charges.billing_details.address,
             status: "pending"
-        };
+        });
         foundAuth.basket = [];
         await foundAuth.save();
+        await foundAuth.populate([
+            {
+                path: "basket.book",
+                model: "kitob",
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
+            }, {
+                path: "orders.products",
+                model: "kitob",
+                populate: [
+                    { path: "avtor", model: "auth" },
+                    { path: "cat", model: "category" }
+                ]
+            },
+            { path: "wishlist" }
+        ]);
         res.status(200).json({ data: foundAuth, message: "Buyurtmangiz qabul qilindi" });
     } catch (error) {
         console.log(error.message);

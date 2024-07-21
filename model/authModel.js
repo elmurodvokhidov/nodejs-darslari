@@ -35,12 +35,15 @@ const authSchema = new mongoose.Schema(
                 }
             }
         ],
-        orders: {
-            products: [{ type: mongoose.Schema.Types.ObjectId, ref: "kitob" }],
-            total: Number,
-            address: Object,
-            status: String
-        },
+        orders: [
+            {
+                products: [{ type: mongoose.Schema.Types.ObjectId, ref: "kitob" }],
+                total: Number,
+                address: Object,
+                status: String,
+                createdAt: { type: Date, default: Date.now() }
+            }
+        ],
         verified: {
             type: Boolean,
             default: false

@@ -126,9 +126,14 @@ const addCommentFunc = async (req, res) => {
         const { id } = req.params;
         const { text, rating, avtor } = req.body;
 
-        const foundBook = await Books.findById(id);
+        const foundBook = await Books.findById(id)
         foundBook.comments.push({ text, rating, avtor });
         await foundBook.save();
+        await foundBook.populate([
+            { path: "comments.avtor" },
+            { path: "avtor" },
+            { path: "cat" },
+        ]);
         res.status(200).json({ data: foundBook, message: "Muvaffaqiyatli saqlandi" });
     } catch (error) {
         console.log(error.message);
