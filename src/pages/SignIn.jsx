@@ -22,7 +22,8 @@ export default function SignIn() {
         });
     };
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault();
         try {
             dispatch(authStart());
             const { data } = await Service.loginAuth(auth);
@@ -122,6 +123,7 @@ export default function SignIn() {
                 <div className="flex justify-between mt-4">
                     <button
                         onClick={handleIsForgotPassword}
+                        type="button"
                         className="text-blue-500 hover:underline">
                         Parolingizni unutdingizmi?
                     </button>

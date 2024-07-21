@@ -31,6 +31,10 @@ const Service = {
         const response = await api.put(`/auth/update-password/${userId}/${uniqueId}`, passwords);
         return response;
     },
+    async payment(data) {
+        const response = await api.post('/auth/payment', data);
+        return response;
+    },
 
 
     // books

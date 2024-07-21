@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { Toast } from "../config/sweetAlert";
 import { Box, Rating } from "@mui/material";
 import { authSuccess } from "../redux/slice/authSlice";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 const BookInfo = () => {
     const { auth } = useSelector(state => state.auth);
@@ -87,48 +88,62 @@ const BookInfo = () => {
         <div className="px-32 py-16 flex justify-center">
             {
                 isLoading || !auth || !book ? "Loading..." :
-                    <div className="border rounded-xl overflow-hidden bg-white shadow-lg">
-                        <figure className="flex flex-col items-end p-2">
-                            <img
-                                src={book?.img}
-                                alt={book?.nomi + " rasmi"}
-                                className="w-[500px]"
-                            />
-                            <Box sx={{ '& > legend': { mt: 2 } }}>
-                                <Rating
-                                    name="simple-controlled"
-                                    value={value}
-                                    onChange={(event, newValue) => {
-                                        setValue(newValue);
-                                        ratingFunction(newValue, book?._id);
-                                    }}
+                    <div className="flex flex-col gap-10">
+                        <div className="border rounded-xl overflow-hidden bg-white shadow-lg">
+                            <figure className="flex flex-col items-end p-2">
+                                <img
+                                    src={book?.img}
+                                    alt={book?.nomi + " rasmi"}
+                                    className="w-[500px] mx-auto"
                                 />
-                            </Box>
-                        </figure>
-                        <div className="flex flex-col gap-2 p-4 text-xl border-t">
-                            <h1 className="text-3xl">{book?.nomi}</h1>
-                            <h1>{book?.description}</h1>
-                            <div className="flex gap-6">
-                                <h1>Narxi: <b>{book?.narxi}$</b></h1>
-                                <h1>Turi: <b>{book?.cat?.nomi}</b></h1>
+                                <Box sx={{ '& > legend': { mt: 2 } }}>
+                                    <Rating
+                                        name="simple-controlled"
+                                        value={value}
+                                        onChange={(event, newValue) => {
+                                            setValue(newValue);
+                                            ratingFunction(newValue, book?._id);
+                                        }}
+                                    />
+                                </Box>
+                            </figure>
+                            <div className="flex flex-col gap-2 p-4 text-xl border-t">
+                                <h1 className="text-3xl">{book?.nomi}</h1>
+                                <h1>{book?.description}</h1>
+                                <div className="flex gap-6">
+                                    <h1>Narxi: <b>{book?.narxi}$</b></h1>
+                                    <h1>Turi: <b>{book?.cat?.nomi}</b></h1>
+                                </div>
                             </div>
-                        </div>
 
-                        {
-                            auth?._id === book?.avtor?._id &&
-                            <div className="flex gap-2 p-4 text-center">
-                                <Link
-                                    to={`/update-book/${book?._id}`}
-                                    className="w-full rounded-xl bg-blue-600 text-white py-2 hover:bg-blue-500">
-                                    Tahrirlash
-                                </Link>
-                                <button
-                                    onClick={() => handleDelete(book?._id)}
-                                    className="w-full rounded-xl bg-red-600 text-white py-2 hover:bg-red-500">
-                                    O'chirish
-                                </button>
-                            </div>
-                        }
+                            {
+                                auth?._id === book?.avtor?._id &&
+                                <div className="flex gap-2 p-4 text-center">
+                                    <Link
+                                        to={`/update-book/${book?._id}`}
+                                        className="w-full rounded-xl bg-blue-600 text-white py-2 hover:bg-blue-500">
+                                        Tahrirlash
+                                    </Link>
+                                    <button
+                                        onClick={() => handleDelete(book?._id)}
+                                        className="w-full rounded-xl bg-red-600 text-white py-2 hover:bg-red-500">
+                                        O'chirish
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                        {/* <div>
+                            {
+                                book?.comments?.map(comment => (
+                                    <div key={comment?._id}>
+                                        <IoPersonCircleOutline />
+                                        <h3>{comment?.avtor?.fullname}</h3>
+                                        <h4>{comment?.avtor?.email}</h4>
+                                        <p>{comment?.createdAt}</p>
+                                    </div>
+                                ))
+                            }
+                        </div> */}
                     </div>
             }
         </div>
