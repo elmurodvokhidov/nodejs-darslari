@@ -17,6 +17,8 @@ import { getFromLocalStorage } from "./config/localstorage";
 import BookInfo from "./pages/BookInfo";
 import { Toast } from "./config/sweetAlert";
 import { UpdatePassword } from "./pages/UpdatePassword";
+import { Orders } from "./pages/Orders";
+import { ProfileInfo } from "./pages/ProfileInfo";
 
 export default function App() {
   const { auth, isLoggedIn } = useSelector(state => state.auth);
@@ -51,7 +53,7 @@ export default function App() {
       }
     }
     else {
-      navigate("/signup");
+      navigate("/signin");
     }
   };
 
@@ -67,7 +69,7 @@ export default function App() {
       }
     }
     else {
-      navigate("/signup");
+      navigate("/signin");
     }
   };
 
@@ -85,7 +87,10 @@ export default function App() {
         />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />}>
+          <Route path="orders" element={<Orders />} />
+          <Route path="me" element={<ProfileInfo />} />
+        </Route>
         <Route path="/wishlist" element={<Wishlist
           addToBasketFunction={addToBasketFunction}
           toggleLikeFunction={toggleLikeFunction}
@@ -93,7 +98,10 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/create-new" element={<Create />} />
         <Route path="/update-book/:id" element={<Update />} />
-        <Route path="/books/:id" element={<BookInfo />} />
+        <Route path="/books/:id" element={<BookInfo
+          addToBasketFunction={addToBasketFunction}
+          toggleLikeFunction={toggleLikeFunction}
+        />} />
         <Route path="/update-password/:userId/:uniqueId" element={<UpdatePassword />} />
       </Routes>
 

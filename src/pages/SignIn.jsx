@@ -76,8 +76,8 @@ export default function SignIn() {
     };
 
     return (
-        <div>
-            <h1 className="text-center text-3xl mt-10">Hisobga kirish</h1>
+        <div className="h-screen w-full absolute z-10 bg-gray-100">
+            <h1 className="text-center text-3xl mt-20">Hisobga kirish</h1>
 
             <form className="max-w-sm mx-auto my-10">
                 <div className="mb-5">

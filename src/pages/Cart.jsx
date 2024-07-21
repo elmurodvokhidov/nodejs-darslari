@@ -9,6 +9,9 @@ import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import StripeCheckout from "react-stripe-checkout";
 import logo from "../../public/logo.jpg"
 import { useEffect, useState } from "react";
+import EmptyAnimation from "../components/EmptyAnimation";
+import MainLoader from "../components/MainLoader";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 export default function Cart() {
     const { auth, isLoading } = useSelector(state => state.auth);
@@ -65,68 +68,99 @@ export default function Cart() {
 
 
     return (
-        <div className="px-32 my-10">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl">Savatdagi barcha mahsulotlar</h1>
-                {
-                    auth?.basket?.length !== 0 &&
-                    <StripeCheckout
-                        name="Book Store ®"
-                        description={`Umumiy so'mma: ${totalAmount?.toLocaleString()} USD`}
-                        image={logo}
-                        ComponentClass="div"
-                        token={onToken}
-                        panelLabel="To'lash"
-                        currency="USD"
-                        stripeKey={stripeKey}
-                        shippingAddress
-                    >
-                        <button className="rounded-md bg-indigo-600 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                            Karta orqali to'lash
-                        </button>
-                    </StripeCheckout>
-                }
-            </div>
-            <div className="mt-5 flex flex-wrap gap-8">
-                {
-                    isLoading ? <h1>Loading...</h1> : <>
+        <div className="h-[70vh] px-32 my-10">
+            <h1 className="text-2xl">Savatdagi barcha mahsulotlar</h1>
+
+            {
+                isLoading ? <MainLoader /> :
+                    <div className="flex gap-10 mt-4">
+                        <div className="w-full max-h-[500px] p-4 flex flex-wrap gap-8 overflow-y-auto">
+                            {
+                                auth?.basket?.length > 0 ?
+                                    auth?.basket.map(item => (
+                                        <div
+                                            key={item?.book?._id}
+                                            className="w-full flex items-start justify-between shadow-md rounded-md p-4 bg-white"
+                                        >
+                                            <Link to={`/books/${item?.book?._id}`} className="flex gap-8">
+                                                <div className="w-[100px] h-[150px]">
+                                                    <img className="size-full object-cover" src={item?.book?.img} alt={item?.book?.nomi} />
+                                                </div>
+
+                                                <div className="flex flex-col justify-between">
+                                                    <div>
+                                                        <h1 className="uppercase text-gray-800 text-xl">{item?.book?.nomi}</h1>
+                                                        <p className="w-3/4 text-gray-400 text-base">{item?.book?.description}</p>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-4 mt-5">
+                                                        <h1 className="text-gray-400">Narxi:</h1>
+                                                        <h1 className="text-lg">${item?.book?.narxi}</h1>
+                                                    </div>
+                                                </div>
+                                            </Link>
+
+                                            <div className="h-full flex flex-col justify-between items-end">
+                                                <button
+                                                    onClick={() => deleteFromCart(item?.book?._id)}
+                                                    className="w-fit flex items-center gap-2 text-lg text-gray-400 hover:text-gray-600">
+                                                    <HiOutlineTrash />
+                                                    <span>Yo'q qilish</span>
+                                                </button>
+                                                <div className="flex items-center gap-8 text-gray-400 border px-2 py-1">
+                                                    <button onClick={() => handleIncAndDecFunction(item, "dec")}>
+                                                        <FaMinus />
+                                                    </button>
+                                                    <p className="text-xl font-semibold">{item?.count}</p>
+                                                    <button onClick={() => handleIncAndDecFunction(item, "inc")}>
+                                                        <FaPlus />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                    : <div>
+                                        <h1 className="text-lg">Ma'lumot topilmadi!</h1>
+                                        <EmptyAnimation />
+                                    </div>
+                            }
+                        </div>
+
                         {
-                            auth?.basket?.length > 0 ?
-                                auth?.basket.map(item => (
-                                    <div
-                                        key={item?.book?._id}
-                                        className="w-fit flex flex-col justify-between bg-white shadow-md"
-                                    >
-                                        <div className="w-[160px] flex flex-col items-center gap-2 p-4">
-                                            <img className="w-full h-[180px] object-cover" src={item?.book?.img} alt={item?.book?.nomi} />
-                                            <h1 className="uppercase text-gray-800 text-base">{item?.book?.nomi?.length > 12 ? item?.book?.nomi?.slice(0, 12) + "..." : item?.book?.nomi}</h1>
-                                            <p className="text-center text-gray-400 text-sm">{item?.book?.description?.length > 30 ? item?.book?.description?.slice(0, 30) + "..." : item?.book?.description}</p>
+                            auth && auth?.basket?.length !== 0 &&
+                            <StripeCheckout
+                                name="Book Store ®"
+                                description={`Umumiy so'mma: ${totalAmount?.toLocaleString()} USD`}
+                                image={logo}
+                                ComponentClass="div"
+                                token={onToken}
+                                panelLabel="To'lash"
+                                currency="USD"
+                                stripeKey={stripeKey}
+                                shippingAddress
+                            >
+                                <div className="w-72 border p-6 shadow-lg rounded-md bg-white">
+                                    <div className="flex flex-col gap-2 text-xl">
+                                        <div className="w-full flex justify-between gap-2">
+                                            <span className="text-gray-600">Jami mahsulotlar:</span>
+                                            <div className="flex-grow border-b-2 border-b-gray-600 border-dashed"></div>
+                                            <span className="text-gray-900">{auth?.basket?.length}</span>
                                         </div>
 
-                                        <div className="flex items-stretch">
-                                            <h1 className="w-3/4 flex items-center justify-center text-center py-2 text-white bg-gray-500">${item?.book?.narxi}</h1>
-
-                                            <div className="flex flex-col items-center bg-green-500 text-white px-2">
-                                                <button onClick={() => handleIncAndDecFunction(item, "inc")}><IoMdArrowDropup /></button>
-                                                <p>{item?.count}</p>
-                                                <button onClick={() => handleIncAndDecFunction(item, "dec")}><IoMdArrowDropdown /></button>
-                                            </div>
-                                            <Link to={`/books/${item?.book?._id}`} className="w-1/4 flex items-center justify-center text-white bg-blue-400">
-                                                <IoEyeOutline />
-                                            </Link>
-                                            <button
-                                                onClick={() => deleteFromCart(item?.book?._id)}
-                                                className="w-fit bg-red-600 text-white p-2 hover:bg-red-500">
-                                                <HiOutlineTrash />
-                                            </button>
+                                        <div className="w-full flex justify-between gap-2">
+                                            <span className="text-gray-600">Jami so'mma:</span>
+                                            <div className="flex-grow border-b-2 border-b-gray-600 border-dashed"></div>
+                                            <span className="text-gray-900">${auth?.basket?.reduce((sum, product) => sum + product?.book?.narxi * product?.count, 0)}</span>
                                         </div>
                                     </div>
-                                ))
-                                : <h1>Ma'lumot topilmadi!</h1>
+                                    <button className="rounded-md bg-indigo-600 mt-8 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                        Rasmiylashtirish
+                                    </button>
+                                </div>
+                            </StripeCheckout>
                         }
-                    </>
-                }
-            </div>
+                    </div>
+            }
         </div>
     )
 }

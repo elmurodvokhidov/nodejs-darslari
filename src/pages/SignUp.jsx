@@ -43,8 +43,8 @@ export default function SignUp() {
     }, [isLoggedIn, navigate]);
 
     return (
-        <div>
-            <h1 className="text-center text-3xl mt-10">Ro'yhatdan o'tish</h1>
+        <div className="h-screen w-full absolute z-10 bg-gray-100">
+            <h1 className="text-center text-3xl mt-20">Ro'yhatdan o'tish</h1>
 
             <form className="max-w-sm mx-auto my-10">
                 <div className="mb-5">
