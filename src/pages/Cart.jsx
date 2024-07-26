@@ -17,7 +17,7 @@ export default function Cart() {
     const { auth, isLoading } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const totalAmount = auth?.basket?.reduce((total, product) => total + product?.book?.narxi * product?.count, 0);
-    const stripeKey = "pk_test_51Oi0EwHw1v8bipqj3mCBmLkT3PKXuDbReDHtIZRKSkBzF7zSRT8QHVq2mQJQAcYf6L9V6w9nUYGD8Mgqa43VoPyW00YHpxmclR";
+    const stripeKey = "your stripe key";
     const [stripeToken, setStripeToken] = useState(null);
 
     const deleteFromCart = async (bookId) => {
